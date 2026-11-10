@@ -2,13 +2,16 @@
 // check and the download buttons on /aimdot. No database, no cookies, nothing about visitors is stored.
 //
 //   /aimdot/download/<windows|windows-portable|linux|linux-tar>  -> 302 to the file in the GitHub release "latest"
-//   /aimdot/update/<windows|linux>/<arch>/<current version>       -> 204 = up to date (header x-aimdot-why says why),
+//   /aimdot/update/<windows|linux>/<arch>/<current version>       -> 204 = nothing to install (x-aimdot-why: current,
+//                                                                     no-release, internal, unsigned, unknown-os, paused),
 //                                                                     else JSON {version, notes, pub_date, url, signature}
 //   /aimdot                                                       -> the static page; its download buttons switch from
 //                                                                     "Coming soon" to real links once the release has the file
 //
 // The release: https://github.com/Resister0/aimdot/releases/tag/latest, titled "Aimdot x.y.z", its text has a line
 // "Built from: <publish text>". A publish text starting with "#" = internal build: downloadable, never offered as an update.
+// The update answer follows the Aimdot updater's server contract (the Tauri / Echo updater format).
+// Nothing about the asker is stored (no IP, no ID) - the installer's privacy notice promises that.
 
 const REPO = "Resister0/aimdot";
 // download button -> file name in the release (the first one that exists wins)
@@ -20,17 +23,17 @@ const FILES = {
 };
 // update check: which download the app replaces itself with, per OS (needs its .sig next to it)
 const UPDATE_FILES = { windows: "windows", linux: "linux" };
-const ARCHES = new Set(["x86_64", "x64", "amd64"]);
+const ARCHES = new Set(["x86_64", "x64", "amd64"]);   // aarch64 etc.: no builds yet -> 204 no-release
 const fileUrl = (name) => `https://github.com/${REPO}/releases/download/latest/${encodeURIComponent(name)}`;
 const UA = { "user-agent": "sonela-hub" };
 
-// ----- the release "latest": GitHub's API (cached 2 min per Worker copy), else github.com itself, else the last good one -----
+// ----- the release "latest": GitHub's API (cached 5 min per Worker copy), else github.com itself, else the last good one -----
 let memo = { at: 0, rel: undefined };
 const sigMemo = new Map();
 const nowS = () => Math.floor(Date.now() / 1000);
 
 async function latestRelease(env) {
-  if (memo.rel !== undefined && nowS() - memo.at < (memo.rel ? 120 : 30)) return memo.rel;
+  if (memo.rel !== undefined && nowS() - memo.at < (memo.rel ? 300 : 30)) return memo.rel;
   const keep = new Request("https://sonela.app/_cache/aimdot-release");
   let rel = null, gone = false;
   try {
@@ -100,12 +103,14 @@ async function download(env, what) {
 async function update(env, os, arch, current) {
   const none = (why) => new Response(null, { status: 204, headers: { "x-aimdot-why": why, "cache-control": "no-store" } });
   if (!UPDATE_FILES[os]) return none("unknown-os");
-  if (!ARCHES.has(arch)) return none("unknown-arch");
+  if (!ARCHES.has(arch)) return none("no-release");
+  // the brake: `npx wrangler secret put AIMDOT_UPDATES_PAUSED` (value 1) pauses updates; `wrangler secret delete` resumes
+  if (env.AIMDOT_UPDATES_PAUSED === "1") return none("paused");
   const rel = await latestRelease(env);
   const version = versionOf(rel);
   if (!version) return none("no-release");
   const file = fileFor(rel, UPDATE_FILES[os]);
-  if (!file) return none("no-file");
+  if (!file) return none("no-release");
   if (!rel.files.includes(`${file}.sig`)) return none("unsigned");
   if (!newer(version, current)) return none("current");
   const notes = ((rel.body.match(/Built from: (.*)/) || [])[1] || "").trim();
