@@ -10,12 +10,12 @@ SEO block to each <head>). Pages: home (E style: three app tiles), about (F styl
 import pathlib, sys
 OUT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parent / "public")
 DISCORD = "https://discord.gg/JPVewEfUQs"
-S_LOGO = '<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="2" y="2" width="60" height="60" rx="18" fill="#f2f3f5"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#111317" stroke-width="6" stroke-linecap="round"/></svg>'
+S_LOGO = '<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#f2f3f5"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#111317" stroke-width="6" stroke-linecap="round"/></svg>'
 WORD = '<span class="wordmark">sonela<i>.</i><i>.</i><i>.</i></span>'
-ECHO = '<svg viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="80" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" stroke-dasharray="390 503" transform="rotate(-200 128 128)"/><path d="M48 104 L58 70 L82 96 Z" fill="#fff" stroke="#fff" stroke-width="8" stroke-linejoin="round"/><path d="M106 86 L176 128 L106 170 Z" fill="#fff" stroke="#fff" stroke-width="12" stroke-linejoin="round"/></svg>'
-# Aimdot's real app icon (copied from ~/Desktop/Sonela/Aimdot/assets/icons/aimdot.svg): the whole tile, not a glyph
+# the apps' real icons (whole tiles): Echo's from echoclip.link, Aimdot's from the Aimdot repo, Lasso's is a stand-in
+ECHO = '<img src="/echo.png" alt="">'
 AIM = '<img src="/aimdot.svg" alt="">'
-LASSO = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 6.5C7 3.5 17.5 3 19 7.5s-5 8.5-10 7.5S3 9.5 5 6.5z" stroke-dasharray="3 2.6"/><path d="M9.5 15c-.5 2 .5 4 2.5 5.5"/></svg>'
+LASSO = '<img src="/lasso.svg" alt="">'
 def head(title, desc, nav_on=""):
     on = lambda h: ' class="on"' if h == nav_on else ''
     return f'''<!doctype html>
@@ -55,48 +55,62 @@ FOOT = f'''</main>
 </html>
 '''
 index = head("Sonela - free, lightweight tools for PC gamers",
- "Free, open-source gaming tools that stay light on your PC: Echo the game clip recorder, the Aimdot crosshair and the Lasso screenshot tool. No ads.", "apps") + f'''<section class="hero">
+ "Free, open-source gaming tools that stay light on your PC: Echo the game clip recorder, the Aimdot crosshair and the Lasso screenshot tool. No ads.", "apps") + f'''<section class="show-hero">
   <div class="wrap">
-    <h1>Tools that stay out<br>of your game's way.</h1>
-    <p>Free, open-source apps for PC gamers. Light, quick, no ads. Windows and Linux.</p>
+    <span class="hero-logo">{S_LOGO}</span>
+    <h1>Tools that stay out <br>of your game's way.</h1>
+    <p>Free apps for PC gamers. Light on your PC, no ads, no accounts. Open source. Windows and Linux.</p>
+    <nav class="app-jump" aria-label="The apps">
+      <a href="#echo"><img src="/echo.png" alt="" width="56" height="56"><span>Echo</span></a>
+      <a href="#aimdot"><img src="/aimdot.svg" alt="" width="56" height="56"><span>Aimdot</span></a>
+      <a href="#lasso"><img src="/lasso.svg" alt="" width="56" height="56"><span>Lasso</span></a>
+    </nav>
   </div>
 </section>
 
 <section id="apps">
   <div class="wrap">
-    <div class="tiles">
-      <article class="tile echo">
-        <span class="ico">{ECHO}</span>
+    <article class="show echo" id="echo">
+      <div class="show-text">
+        <img class="app-icon" src="/echo.png" alt="" width="72" height="72">
+        <p class="kicker">Game clip recorder · out now</p>
         <h2>Echo</h2>
-        <span class="sub">Game clip recorder</span>
-        <p>Records your game in the background and saves the last moments with one key. Trim, caption and share on Discord.</p>
+        <p class="lead">Records your game in the background. Press one key to save the last moments, then trim them and share them on Discord.</p>
         <div class="nums">
           <div><b>~150 MB</b><small>memory while recording</small></div>
           <div><b>0.6 %</b><small>CPU while recording</small></div>
           <div><b>0</b><small>ads or accounts needed</small></div>
         </div>
-        <div class="foot"><span class="tag out">Out now · 2.0</span><a class="app-link" href="https://echoclip.link/">echoclip.link →</a></div>
-      </article>
-      <article class="tile aimdot">
-        <span class="ico">{AIM}</span>
+        <p class="cta-row"><a class="btn app" href="https://echoclip.link/download">Download Echo</a>
+          <a class="btn ghost" href="https://echoclip.link/">echoclip.link</a></p>
+        <p class="small"><a href="https://github.com/Resister0/echoclip">Code on GitHub</a> · Windows and Linux</p>
+      </div>
+      <figure class="shot"><img src="/echo-library.webp" srcset="/echo-library-800.webp 800w, /echo-library.webp 1600w"
+        sizes="(max-width:1000px) 92vw, 620px" width="1600" height="869"
+        alt="Echo's clip library: this week's clips, each with a preview, its game and its length"></figure>
+    </article>
+
+    <div class="soon-row">
+      <article class="show-card aimdot" id="aimdot">
+        <img class="app-icon" src="/aimdot.svg" alt="" width="64" height="64">
+        <p class="kicker">Crosshair overlay · coming soon</p>
         <h2>Aimdot</h2>
-        <span class="sub">Crosshair overlay</span>
         <p>A clean crosshair on top of any game. Pick the shape, colour and size, and turn it on or off with a hotkey.</p>
-        <div class="foot"><span class="tag">Coming soon</span><a class="app-link" href="/aimdot">sonela.app/aimdot →</a></div>
+        <a class="app-link" href="/aimdot">More about Aimdot →</a>
       </article>
-      <article class="tile lasso">
-        <span class="ico">{LASSO}</span>
+      <article class="show-card lasso" id="lasso">
+        <img class="app-icon" src="/lasso.svg" alt="" width="64" height="64">
+        <p class="kicker">Screenshot tool · coming soon</p>
         <h2>Lasso</h2>
-        <span class="sub">Screenshot tool</span>
         <p>Draw around any part of the screen, mark it up, then copy, save or share it. Light enough to leave running all the time.</p>
-        <div class="foot"><span class="tag">Coming soon</span><a class="app-link" href="/lasso">sonela.app/lasso →</a></div>
+        <a class="app-link" href="/lasso">More about Lasso →</a>
       </article>
     </div>
 
     <div class="why">
       <div><h3>Light on your PC</h3><p>Native apps built in Rust, not a web browser in disguise. Echo uses about 150 MB of memory while recording.</p></div>
       <div><h3>Free, no catch</h3><p>No ads, no tracking and no paid version of the apps. Echo's optional cloud storage has paid plans for more space.</p></div>
-      <div><h3>Open source</h3><p>The code is on GitHub under the GPL-3.0 licence, so anyone can check what the apps do.</p></div>
+      <div><h3>Open source</h3><p>The code is on GitHub, so anyone can check what the apps do.</p></div>
       <div><h3>Windows and Linux</h3><p>Windows 10 and 11, and Linux, including Steam Deck and Bazzite through Flatpak.</p></div>
     </div>
   </div>
