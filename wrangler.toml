@@ -1,0 +1,16 @@
+# Sonela hub site: a static-assets-only Worker (no script, no database, no cost on the free plan).
+# Deploy (from this folder): npx wrangler deploy
+name = "sonela-hub"
+compatibility_date = "2025-09-01"
+workers_dev = true
+# sonela.app is on Cloudflare (bought 10 Nov 2026): on deploy, wrangler adds the DNS records + certificates for both by itself.
+# www.sonela.app shows the same pages; every page's canonical tag points to https://sonela.app, so search engines see one site.
+routes = [
+  { pattern = "sonela.app", custom_domain = true },
+  { pattern = "www.sonela.app", custom_domain = true },
+]
+
+[assets]
+directory = "./public"
+html_handling = "auto-trailing-slash"   # about.html is served at /about
+not_found_handling = "404-page"         # unknown paths get public/404.html with status 404
