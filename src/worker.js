@@ -14,7 +14,7 @@ const REPO = "Resister0/aimdot";
 // download button -> file name in the release (the first one that exists wins)
 const FILES = {
   "windows": ["Aimdot-Setup.exe"],
-  "windows-portable": ["Aimdot-Windows-portable.zip", "Aimdot-Windows.zip"],
+  "windows-portable": ["Aimdot-Windows.zip"],
   "linux": ["Aimdot-x86_64.AppImage"],
   "linux-tar": ["Aimdot-linux-x86_64.tar.gz"],
 };
