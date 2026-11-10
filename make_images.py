@@ -8,7 +8,7 @@ site.webmanifest. The pictures are SVG, turned into PNG with Inkscape (Linux: th
 The look: dark only, neutral brand (a white "S" tile on graphite), colour only from the apps (Echo purple, Aimdot coral,
 Lasso teal) - same as style.css.
 """
-import json, pathlib, shutil, subprocess, sys, tempfile
+import base64, json, pathlib, shutil, subprocess, sys, tempfile
 from PIL import Image
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -32,24 +32,35 @@ SQUARE = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect wi
           f'<path d="{S_PATH}" fill="none" stroke="{BG}" stroke-width="6" stroke-linecap="round"/></svg>\n')
 
 
+HERE = pathlib.Path(__file__).resolve().parent
+# the apps' real icons for the share picture: Echo's (from echoclip.link), Aimdot's (public/aimdot.svg, copied from the
+# Aimdot repo), Lasso's stand-in (teal tile with the site's Lasso glyph - not a final icon)
+APP_ICONS = {"Echo": HERE / ".github/readme/echo.png", "Aimdot": SITE / "aimdot.svg", "Lasso": HERE / ".github/readme/lasso.png"}
+
+
+def data_uri(path):
+    kind = "image/svg+xml" if path.suffix == ".svg" else "image/png"
+    return f"data:{kind};base64," + base64.b64encode(path.read_bytes()).decode()
+
+
 def chip(x, name, sub, colour, live):
-    w = 300
+    w = 320
     fill = f'fill="{colour}" fill-opacity="0.16"' if live else f'fill="{CARD}"'
     return (f'<rect x="{x}" y="380" width="{w}" height="112" rx="20" {fill} stroke="{colour}" stroke-width="3"/>'
-            f'<circle cx="{x + 40}" cy="436" r="12" fill="{colour}"/>'
-            f'<text x="{x + 66}" y="428" font-family="{FONT}" font-size="34" font-weight="700" fill="{INK}">{name}</text>'
-            f'<text x="{x + 66}" y="466" font-family="{FONT}" font-size="22" font-weight="500" fill="{MUTED}">{sub}</text>')
+            f'<image x="{x + 22}" y="408" width="56" height="56" href="{data_uri(APP_ICONS[name])}"/>'
+            f'<text x="{x + 94}" y="428" font-family="{FONT}" font-size="34" font-weight="700" fill="{INK}">{name}</text>'
+            f'<text x="{x + 94}" y="466" font-family="{FONT}" font-size="22" font-weight="500" fill="{MUTED}">{sub}</text>')
 
 
 OG = (f'<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">'
       f'<rect width="1200" height="630" fill="{BG}"/>'
-      f'<g transform="translate(90 118) scale(2.35)"><rect x="2" y="2" width="60" height="60" rx="18" fill="{INK}"/>'
+      f'<g transform="translate(90 118) scale(2.35)"><rect width="64" height="64" rx="18" fill="{INK}"/>'
       f'<path d="{S_PATH}" fill="none" stroke="{BG}" stroke-width="6" stroke-linecap="round"/></g>'
       f'<text x="270" y="222" font-family="{FONT}" font-size="108" font-weight="700" letter-spacing="-3" fill="{INK}">{BRAND}</text>'
       f'<text x="274" y="282" font-family="{FONT}" font-size="38" font-weight="500" fill="{MUTED}">Free, lightweight tools for PC gamers</text>'
       + chip(90, "Echo", "clips · out now", ECHO, True)
-      + chip(410, "Aimdot", "crosshair · soon", AIMDOT, False)
-      + chip(730, "Lasso", "screenshots · soon", LASSO, False)
+      + chip(420, "Aimdot", "crosshair · soon", AIMDOT, False)
+      + chip(750, "Lasso", "screenshots · soon", LASSO, False)
       + f'<text x="90" y="560" font-family="{FONT}" font-size="28" font-weight="600" fill="{MUTED}">Free · No ads · Open source · Windows &amp; Linux</text>'
       '</svg>\n')
 

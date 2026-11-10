@@ -13,7 +13,8 @@ DISCORD = "https://discord.gg/JPVewEfUQs"
 S_LOGO = '<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="2" y="2" width="60" height="60" rx="18" fill="#f2f3f5"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#111317" stroke-width="6" stroke-linecap="round"/></svg>'
 WORD = '<span class="wordmark">sonela<i>.</i><i>.</i><i>.</i></span>'
 ECHO = '<svg viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="80" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" stroke-dasharray="390 503" transform="rotate(-200 128 128)"/><path d="M48 104 L58 70 L82 96 Z" fill="#fff" stroke="#fff" stroke-width="8" stroke-linejoin="round"/><path d="M106 86 L176 128 L106 170 Z" fill="#fff" stroke="#fff" stroke-width="12" stroke-linejoin="round"/></svg>'
-AIM = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="6.5"/><path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5"/><circle cx="12" cy="12" r="1" fill="#fff"/></svg>'
+# Aimdot's real app icon (copied from ~/Desktop/Sonela/Aimdot/assets/icons/aimdot.svg): the whole tile, not a glyph
+AIM = '<img src="/aimdot.svg" alt="">'
 LASSO = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 6.5C7 3.5 17.5 3 19 7.5s-5 8.5-10 7.5S3 9.5 5 6.5z" stroke-dasharray="3 2.6"/><path d="M9.5 15c-.5 2 .5 4 2.5 5.5"/></svg>'
 def head(title, desc, nav_on=""):
     on = lambda h: ' class="on"' if h == nav_on else ''

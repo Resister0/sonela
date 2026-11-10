@@ -17,7 +17,7 @@ import datetime, html, json, pathlib, re, subprocess, sys
 BRAND = "Sonela"
 ORIGIN = "https://sonela.app"
 SITE = pathlib.Path(__file__).resolve().parent / "public"
-OG_IMAGE = f"{ORIGIN}/og.png?v=3"   # Discord caches images per URL: bump v when og.png changes
+OG_IMAGE = f"{ORIGIN}/og.png?v=4"   # Discord caches images per URL: bump v when og.png changes
 OG_ALT = f"{BRAND} - free, lightweight tools for PC gamers: Echo, Aimdot and Lasso."
 SAME_AS = ["https://github.com/Resister0/sonela", "https://discord.gg/JPVewEfUQs"]
 EMAIL = "support@echoclip.link"
