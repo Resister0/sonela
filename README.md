@@ -4,59 +4,58 @@
 
 <h1 align="center">Sonela</h1>
 
-<p align="center">Free, lightweight tools for PC gamers. No ads, no accounts, open source.<br>
-<a href="https://sonela.app">sonela.app</a></p>
+<p align="center"><b>Free tools for PC gamers that stay out of your game's way.</b></p>
 
----
+<p align="center">
+  Light on your PC. No ads, no accounts. Open source. Windows and Linux.<br>
+  <a href="https://sonela.app">sonela.app</a> · <a href="https://discord.gg/JPVewEfUQs">Discord</a>
+</p>
 
-Sonela is a small family of free apps for PC gamers. Each one does one job, stays light on your PC while you play, and
-runs on Windows and Linux.
+<br>
 
-## The apps
+<p align="center"><img src=".github/readme/echo.png" width="72" height="72" alt=""></p>
+<h2 align="center">Echo</h2>
+<p align="center">
+  Records your game in the background. Press one key to save the last moments,<br>
+  then trim them and share them on Discord. Uses about 150 MB of memory while recording.
+</p>
+<p align="center">
+  <a href="https://echoclip.link/download"><b>Download Echo</b></a> ·
+  <a href="https://echoclip.link">echoclip.link</a> ·
+  <a href="https://github.com/Resister0/echoclip">Code on GitHub</a>
+</p>
+<p align="center">
+  <img src=".github/readme/echo-library.jpg" width="820" alt="Echo's clip library: the clips from this week, each with a preview, its game and its length">
+</p>
 
-| App | What it does | Where |
-|---|---|---|
-| **Echo** | Game clip recorder: records in the background, saves the last moments with one key, trim and share. | [echoclip.link](https://echoclip.link) · [code](https://github.com/Resister0/echoclip) |
-| **Sonela Aimdot** | A clean crosshair overlay for any game. | [sonela.app/aimdot](https://sonela.app/aimdot) · coming soon |
-| **Sonela Lasso** | A screenshot tool: draw around it, mark it up, share it. | [sonela.app/lasso](https://sonela.app/lasso) · coming soon |
+<br>
 
-## This repo
+<p align="center"><img src=".github/readme/aimdot.png" width="72" height="72" alt=""></p>
+<h2 align="center">Aimdot</h2>
+<p align="center">
+  A clean crosshair on top of any game. Pick the shape, colour and size,<br>
+  and turn it on or off with a hotkey.
+</p>
+<p align="center"><b>Coming soon</b> · <a href="https://sonela.app/aimdot">sonela.app/aimdot</a></p>
 
-This is the code of the [sonela.app](https://sonela.app) website: plain HTML and CSS, no JavaScript, no cookies, no
-tracking. It runs as a [Cloudflare Worker](https://developers.cloudflare.com/workers/static-assets/) that only serves
-the static files in `public/`.
+<br>
 
-| File | What it is |
-|---|---|
-| `public/` | the website: pages, `style.css`, icons, share picture, `robots.txt`, `sitemap.xml`, `_headers` (security headers) |
-| `build_pages.py` | the page text and layout. Edit here, not in `public/*.html` (it writes them) |
-| `seo.py` | writes the SEO block in each page's `<head>` (canonical, Open Graph, JSON-LD) + `sitemap.xml` + `robots.txt`. `--check` only reports |
-| `make_images.py` | draws the icons and the share picture (SVG, turned into PNG with Inkscape) |
-| `icons/` | the Sonela icon: `sonela.svg` + PNG 16-512 px + `sonela.ico` |
-| `wrangler.toml` | the Worker settings (sonela.app + www.sonela.app) |
+<p align="center"><img src=".github/readme/lasso.png" width="72" height="72" alt=""></p>
+<h2 align="center">Lasso</h2>
+<p align="center">
+  Draw around any part of the screen, mark it up,<br>
+  then copy, save or share it.
+</p>
+<p align="center"><b>Coming soon</b> · <a href="https://sonela.app/lasso">sonela.app/lasso</a></p>
 
-### Run it on your PC
+<br>
 
-You need [Node.js](https://nodejs.org). In this folder:
+<h2 align="center">Get in touch</h2>
+<p align="center">
+  Questions, bugs and ideas: the <a href="https://discord.gg/JPVewEfUQs">Discord</a> or
+  <a href="mailto:support@echoclip.link">support@echoclip.link</a>.
+</p>
 
-```bash
-npx wrangler dev
-```
+<br>
 
-Then open http://localhost:8787.
-
-After changing the text in `build_pages.py`:
-
-```bash
-python3 build_pages.py && python3 seo.py
-```
-
-(`make_images.py` needs Python with Pillow, and Inkscape.)
-
-## Contact
-
-Questions, bugs and ideas: the [Discord](https://discord.gg/JPVewEfUQs) or support@echoclip.link.
-
-## License
-
-The website code is [MIT](LICENSE). Echo has its own license (GPL-3.0) in [its repo](https://github.com/Resister0/echoclip).
+<p align="center"><sub>Echo is GPL-3.0. This repo is also the code of sonela.app (<a href="LICENSE">MIT</a>).</sub></p>
