@@ -4,8 +4,8 @@
     python3 build_pages.py && python3 make_images.py && python3 seo.py
 
 This is the source of the page text: edit here, not in public/*.html (this script overwrites them; seo.py then adds the
-SEO block to each <head>). Pages: home (E style: three app tiles), about (F style: split), aimdot + lasso (app pages,
-"coming soon" for now), privacy, 404.
+SEO block to each <head>). Pages: home (showcase), about (split), aimdot (features + downloads, switched on by src/worker.js once
+released), lasso ("coming soon"), privacy, 404.
 """
 import pathlib, sys
 OUT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parent / "public")
@@ -166,18 +166,36 @@ nf = head("Page not found - Sonela",
   </div>
 </section>
 ''' + FOOT
-def app_page(key, name, icon, title, desc, kind, lead, points):
-    """A simple page for an app that isn't out yet: big icon, one line, a greyed-out download, Discord for news."""
+# Aimdot's download buttons (key = /aimdot/download/<key>, see src/worker.js). Written as greyed-out "Coming soon"
+# buttons; the Worker turns each one into a real link as soon as GitHub's release "latest" has that file - no rebuild.
+AIMDOT_DOWNLOADS = [("windows", "Windows", "installer"), ("windows-portable", "Windows", "portable zip"),
+                    ("linux", "Linux", "AppImage"), ("linux-tar", "Linux", "tar.gz")]
+
+
+def dl_buttons(items):
+    btns = "\n".join(f'      <span class="btn off dl" data-dl="{k}" aria-disabled="true"><span>{os} ({what})</span>'
+                     f'<small data-dl-soon="{k}">Coming soon</small></span>' for k, os, what in items)
+    return (f'<div class="dl-grid" id="download">\n{btns}\n    </div>\n'
+            f'    <p class="cta"><a class="btn ghost" href="{DISCORD}">Get news on Discord</a></p>\n'
+            '    <p class="note"><span data-dl-version></span>Free and open source. No ads, no account.</p>')
+
+
+def app_page(key, name, icon, title, desc, kind, lead, points, downloads=None):
+    """An app page: big icon, one line, the downloads (greyed out until there's a release), the features."""
     feats = "\n".join(f'      <div><h3>{h}</h3><p>{t}</p></div>' for h, t in points)
+    if downloads:
+        dl = dl_buttons(downloads)
+    else:
+        dl = (f'<p class="cta"><span class="btn off" aria-disabled="true">Download · coming soon</span>\n'
+              f'      <a class="btn ghost" href="{DISCORD}">Get news on Discord</a></p>\n'
+              '    <p class="note">Free and open source. Windows and Linux. No ads, no account.</p>')
     return head(title, desc, "apps") + f'''<section class="app-hero {key}">
   <div class="wrap">
     <span class="ico big">{icon}</span>
     <p class="kicker">Sonela {name} · {kind}</p>
     <h1>{name}</h1>
     <p class="lead">{lead}</p>
-    <p class="cta"><span class="btn off" aria-disabled="true">Download · coming soon</span>
-      <a class="btn ghost" href="{DISCORD}">Get news on Discord</a></p>
-    <p class="note">Free and open source. Windows and Linux. No ads, no account.</p>
+    {dl}
   </div>
 </section>
 
@@ -193,12 +211,19 @@ def app_page(key, name, icon, title, desc, kind, lead, points):
 
 aimdot = app_page("aimdot", "Aimdot", AIM,
  "Sonela Aimdot - a free crosshair overlay for PC games",
- "Sonela Aimdot puts a clean crosshair on top of any PC game. Free, open source and light, for Windows and Linux. Coming soon.",
+ "Sonela Aimdot puts your own crosshair on top of any PC game: design or paint it, one per game, share codes, CS2 and Valorant import. Windows and Linux.",
  "Crosshair overlay",
- "A clean crosshair on top of any game. Pick the shape, colour and size, and turn it on or off with a hotkey.",
- [("Your crosshair", "Choose the shape, colour and size so it's easy to see in every game."),
-  ("One hotkey", "Turn it on or off without leaving the game."),
-  ("Light", "A small native app, like Echo. It stays out of the way while you play.")])
+ "Your own crosshair on top of any game. Design it or paint it, give each game its own, and turn it on or off with a hotkey.",
+ [("Design it", "Pick the shape, colour, size, gap and outline, and watch it change as you go."),
+  ("Or paint it", "Draw your crosshair pixel by pixel, with layers and animation."),
+  ("Use a picture", "Any image of your own can be your crosshair."),
+  ("One per game", "Give each game its own crosshair. Aimdot switches when the game starts."),
+  ("Share codes", "Send your crosshair to a friend as a short code, or bring yours over from CS2 or Valorant."),
+  ("Hotkeys", "Show, hide or switch crosshairs without leaving the game."),
+  ("Out of the way", "Lives in the tray and can start with your PC."),
+  ("Game Bar mode", "On Windows, it also shows over games in exclusive fullscreen."),
+  ("Very light", "A small native app. You won't notice it while you play.")],
+ AIMDOT_DOWNLOADS)
 
 lasso = app_page("lasso", "Lasso", LASSO,
  "Sonela Lasso - a free screenshot tool for Windows and Linux",

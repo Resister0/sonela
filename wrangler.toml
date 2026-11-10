@@ -1,6 +1,9 @@
-# Sonela hub site: a static-assets-only Worker (no script, no database, no cost on the free plan).
+# Sonela hub site: static pages (public/) + a small script (src/worker.js) for Aimdot's downloads, update check and
+# download buttons. No database, no secrets needed, free plan. Optional secret GITHUB_TOKEN (read-only, public repos)
+# only raises GitHub's rate limit; without it the script falls back to reading github.com.
 # Deploy (from this folder): npx wrangler deploy
 name = "sonela-hub"
+main = "src/worker.js"
 compatibility_date = "2025-09-01"
 workers_dev = true
 # sonela.app is on Cloudflare (bought 10 Nov 2026): on deploy, wrangler adds the DNS records + certificates for both by itself.
@@ -12,5 +15,8 @@ routes = [
 
 [assets]
 directory = "./public"
+binding = "ASSETS"
+# only these paths run the script first; every other page is served straight from public/
+run_worker_first = ["/aimdot", "/aimdot/download/*", "/aimdot/update/*"]
 html_handling = "auto-trailing-slash"   # about.html is served at /about
 not_found_handling = "404-page"         # unknown paths get public/404.html with status 404
