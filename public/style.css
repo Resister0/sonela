@@ -77,6 +77,8 @@ header nav a:hover, header nav a.on { color:var(--ink); text-decoration:none; }
 .shot img { display:block; width:100%; height:auto; border-radius:14px; border:1px solid var(--line);
   box-shadow:0 30px 80px -28px color-mix(in srgb, var(--c) 60%, transparent); }
 .soon-row { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px; }
+.soon-row.one { grid-template-columns:1fr; }
+.show + .show { margin-top:18px; }
 .show-card { padding:36px; display:flex; flex-direction:column; gap:10px; }
 .show-card .app-icon { margin-bottom:10px; border-radius:18px; }
 .show-card h2 { font-size:30px; }

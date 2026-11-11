@@ -23,7 +23,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://sonela.app/#site","name":"Sonela","url":"https://sonela.app/","description":"Free, open-source gaming tools that stay light on your PC: Echo the game clip recorder, the Aimdot crosshair and the Lasso screenshot tool. No ads.","publisher":{"@id":"https://sonela.app/#org"}},{"@type":"Organization","@id":"https://sonela.app/#org","name":"Sonela","url":"https://sonela.app/","logo":"https://sonela.app/icon-512.png","email":"support@echoclip.link","sameAs":["https://github.com/Resister0/sonela","https://discord.gg/JPVewEfUQs"]},{"@type":"ItemList","@id":"https://sonela.app/#apps","name":"Apps by Sonela","itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"SoftwareApplication","name":"Echo","description":"Game clip recorder for Windows and Linux","operatingSystem":"Windows, Linux","isAccessibleForFree":true,"publisher":{"@id":"https://sonela.app/#org"},"url":"https://echoclip.link/"}},{"@type":"ListItem","position":2,"item":{"@type":"SoftwareApplication","name":"Sonela Aimdot","description":"Crosshair overlay (coming soon)","operatingSystem":"Windows, Linux","isAccessibleForFree":true,"publisher":{"@id":"https://sonela.app/#org"},"url":"https://sonela.app/aimdot"}},{"@type":"ListItem","position":3,"item":{"@type":"SoftwareApplication","name":"Sonela Lasso","description":"Screenshot and snipping tool (coming soon)","operatingSystem":"Windows, Linux","isAccessibleForFree":true,"publisher":{"@id":"https://sonela.app/#org"},"url":"https://sonela.app/lasso"}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://sonela.app/#site","name":"Sonela","url":"https://sonela.app/","description":"Free, open-source gaming tools that stay light on your PC: Echo the game clip recorder, the Aimdot crosshair and the Lasso screenshot tool. No ads.","publisher":{"@id":"https://sonela.app/#org"}},{"@type":"Organization","@id":"https://sonela.app/#org","name":"Sonela","url":"https://sonela.app/","logo":"https://sonela.app/icon-512.png","email":"support@echoclip.link","sameAs":["https://github.com/Resister0/sonela","https://discord.gg/JPVewEfUQs"]},{"@type":"ItemList","@id":"https://sonela.app/#apps","name":"Apps by Sonela","itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"SoftwareApplication","name":"Echo","description":"Game clip recorder for Windows and Linux","operatingSystem":"Windows, Linux","isAccessibleForFree":true,"publisher":{"@id":"https://sonela.app/#org"},"url":"https://echoclip.link/"}},{"@type":"ListItem","position":2,"item":{"@type":"SoftwareApplication","name":"Sonela Aimdot","description":"Crosshair overlay","operatingSystem":"Windows, Linux","isAccessibleForFree":true,"publisher":{"@id":"https://sonela.app/#org"},"url":"https://sonela.app/aimdot"}},{"@type":"ListItem","position":3,"item":{"@type":"SoftwareApplication","name":"Sonela Lasso","description":"Screenshot and snipping tool (coming soon)","operatingSystem":"Windows, Linux","isAccessibleForFree":true,"publisher":{"@id":"https://sonela.app/#org"},"url":"https://sonela.app/lasso"}}]}]}</script>
 <!-- /seo -->
 <link rel="stylesheet" href="/style.css">
 </head>
@@ -72,14 +72,27 @@
         alt="Echo's clip library: this week's clips, each with a preview, its game and its length"></figure>
     </article>
 
-    <div class="soon-row">
-      <article class="show-card aimdot" id="aimdot">
-        <img class="app-icon" src="/aimdot.svg" alt="" width="64" height="64">
-        <p class="kicker">Crosshair overlay · coming soon</p>
+    <article class="show aimdot" id="aimdot">
+      <div class="show-text">
+        <img class="app-icon" src="/aimdot.svg" alt="" width="72" height="72">
+        <p class="kicker">Crosshair overlay · out now</p>
         <h2>Aimdot</h2>
-        <p>A clean crosshair on top of any game. Pick the shape, colour and size, and turn it on or off with a hotkey.</p>
-        <a class="app-link" href="/aimdot">More about Aimdot →</a>
-      </article>
+        <p class="lead">Your own crosshair on top of any game. Pick a preset, design your own or paint it pixel by pixel - one per game, and on or off with one key.</p>
+        <div class="nums">
+          <div><b>120+</b><small>crosshair presets</small></div>
+          <div><b>1 key</b><small>to show or hide it</small></div>
+          <div><b>0</b><small>ads or accounts needed</small></div>
+        </div>
+        <p class="cta-row"><a class="btn app" href="/aimdot#download">Download Aimdot</a>
+          <a class="btn ghost" href="/aimdot">More about Aimdot</a></p>
+        <p class="small"><a href="https://github.com/Resister0/aimdot">Code on GitHub</a> · Windows and Linux</p>
+      </div>
+      <figure class="shot"><img src="/aimdot-designer.jpg" srcset="/aimdot-designer-800.jpg 800w, /aimdot-designer.jpg 1280w"
+        sizes="(max-width:1000px) 92vw, 620px" width="1280" height="800"
+        alt="Aimdot's Designer: crosshair presets and a live preview over a game-like background"></figure>
+    </article>
+
+    <div class="soon-row one">
       <article class="show-card lasso" id="lasso">
         <img class="app-icon" src="/lasso.svg" alt="" width="64" height="64">
         <p class="kicker">Screenshot tool · coming soon</p>
