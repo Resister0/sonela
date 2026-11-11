@@ -158,7 +158,7 @@ PAGES = [  # file, <title>, <meta description>, nav word marked as current ("" =
         <img src="/img/aimdot-designer.webp" width="1280" height="800" alt="The real Aimdot app: the Designer with crosshair presets, colour settings and a live preview" fetchpriority="high">
         <div class="ly-float">
           <div class="ly-float__row"><span class="ly-live">Aimdot's overlay, in a game</span><span>measured</span></div>
-          <div class="ly-float__title">About 3.5 MB of memory, no CPU while idle</div>
+          <div class="ly-float__title">About 2 MB of memory, no CPU while idle</div>
         </div>
       </div>
     </div></div>
@@ -222,7 +222,7 @@ PAGES = [  # file, <title>, <meta description>, nav word marked as current ("" =
         <h2 class="mo-lt__type" id="why-h">Native. Free. Open.</h2>
       </div>
       <div class="sn-why">
-        <div class="sn-why__card"><img class="sn-ico-mono" src="/icons/rust.svg" alt="Rust" width="40" height="40" loading="lazy"><h3>Native apps in Rust</h3><p>Not a web browser in disguise. Echo uses about 150 MB of memory while recording, Aimdot's overlay about 3.5 MB.</p></div>
+        <div class="sn-why__card"><img class="sn-ico-mono" src="/icons/rust.svg" alt="Rust" width="40" height="40" loading="lazy"><h3>Native apps in Rust</h3><p>Not a web browser in disguise. Echo uses about 150 MB of memory while recording, Aimdot's overlay about 2 MB.</p></div>
         <div class="sn-why__card"><span class="sn-why__apps"><img src="/echo.png" alt="" width="32" height="32" loading="lazy"><img src="/aimdot.svg" alt="" width="32" height="32" loading="lazy"><img src="/lasso.svg" alt="" width="32" height="32" loading="lazy"></span><h3>Free apps, every feature</h3><p>Echo and Aimdot cost nothing and track nothing. Echo's optional cloud storage has paid plans for more space.</p></div>
         <div class="sn-why__card"><img class="sn-ico-mono" src="/icons/github.svg" alt="GitHub" width="40" height="40" loading="lazy"><h3>Open-source code for every app</h3><p>The code is on <a href="https://github.com/Resister0">GitHub</a>, so anyone can check what the apps do.</p></div>
         <div class="sn-why__card"><span class="sn-why__apps"><img src="/icons/windows.svg" alt="Windows" width="32" height="32" loading="lazy"><img src="/icons/linux-tux.svg" alt="Linux" width="32" height="32" loading="lazy"></span><h3>Windows 10, 11, Linux and Steam Deck</h3><p>Windows 10 and 11, and Linux, including Steam Deck and Bazzite through Flatpak.</p></div>
