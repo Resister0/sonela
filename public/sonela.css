@@ -44,7 +44,8 @@ html[data-look="light"] .nav .sn-logo path { stroke: #f2f3f5; }
 /* ---------------------------------------------------------------- the app sections */
 .sn-kicker { display: flex; align-items: center; gap: var(--s-3); margin: 0; font-size: var(--t-small); font-weight: 500; color: var(--p-muted); }
 .sn-kicker img { width: 40px; height: 40px; border-radius: 11px; display: block; }
-.sn-split { align-items: center; row-gap: var(--s-7); }
+.sn-app .sn-kicker img { width: 28px; height: 28px; border-radius: 8px; }
+.sn-split { align-items: start; row-gap: var(--s-7); }
 .sn-split h2 { margin: 0; max-width: 16ch; }
 .sn-split .t-lead { margin: 0; max-width: 40ch; }
 .sn-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); margin: var(--s-2) 0; }
@@ -56,51 +57,59 @@ html[data-look="light"] .nav .sn-logo path { stroke: #f2f3f5; }
 .sn-points li::before { content: ""; position: absolute; left: 2px; top: .45em; width: 11px; height: 6px; border-left: 2px solid var(--aimdot); border-bottom: 2px solid var(--aimdot); transform: rotate(-45deg); }
 .sn-shot { margin: 0; border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--line-strong); background: #111; }
 .sn-shot img { display: block; width: 100%; height: auto; }
+.sn-shot--echo { aspect-ratio: 4 / 3; }
+.sn-shot--echo img { height: 100%; object-fit: cover; object-position: 0 0; }
 .sn-shot--echo { box-shadow: 0 30px 80px #0008, 0 0 60px rgba(124, 92, 255, .18); }
 .sn-shot--aimdot { box-shadow: 0 30px 80px #0008, 0 0 60px rgba(239, 106, 76, .16); }
-/* the two Aimdot windows overlap: the Painter in front, the presets behind it, higher and to the right */
-.sn-pair { position: relative; padding: 9% 18% 0 0; }
-.sn-pair .sn-shot--back { position: absolute; right: 0; top: 0; width: 56%; z-index: -1; opacity: .9; }
-.sn-split--flip > .sn-pair { grid-row: 1; grid-column: 1 / span 7; }
-/* the app's own colour on its download button */
-.btn.sn-btn-echo { --action: var(--echo-btn); --action-ink: #fff; background: var(--echo-btn); color: #fff; }
-.btn.sn-btn-aimdot { --action: var(--aimdot-btn); --action-ink: #fff; background: var(--aimdot-btn); color: #fff; }
-.btn.sn-btn-echo img, .btn.sn-btn-aimdot img { width: 28px; height: 28px; border-radius: 8px; }
+/* the two Aimdot windows, one above the other: the Painter, then the preset list */
+.sn-pair { display: grid; gap: var(--gutter); align-content: start; }
+.sn-pair .sn-shot--back { aspect-ratio: 16 / 7; }
+.sn-pair .sn-shot--back img { height: 100%; object-fit: cover; object-position: 0 0; }
+/* a download button: the page's one primary style, with the app's own tile inside */
+.btn.sn-dl { gap: var(--s-2); }
+.btn.sn-dl img { width: 24px; height: 24px; border-radius: 7px; display: block; flex: none; }
 
 /* ---------------------------------------------------------------- Lasso: the dark band (rhythm), coming next */
 .sn-lasso { background: color-mix(in oklab, var(--p-bg) 70%, #000); }
 html[data-look="light"] .sn-lasso { background: #ebebe7; }
-.sn-band { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s-7); align-items: center; max-width: 900px; margin: auto 0; }
-.sn-band__icon { width: 128px; height: 128px; border-radius: 30px; display: block; box-shadow: 0 20px 60px rgba(20, 163, 139, .25); }
 .sn-kicker--plain { color: var(--lasso); }
-.sn-band h2 { margin: 0; }
-.sn-band .t-lead { margin: 0; max-width: 46ch; }
+/* Lasso has no screenshots yet: its real app tile, big, on a teal-lit panel */
+.sn-tile { aspect-ratio: 1 / 1; max-height: 72vh; display: grid; place-items: center; border-radius: var(--r-lg); border: 1px solid var(--line-strong);
+  background: radial-gradient(60% 60% at 50% 50%, rgba(20, 163, 139, .28), transparent 70%), var(--p-surface); }
+.sn-tile img { width: 44%; height: auto; border-radius: 22%; display: block; box-shadow: 0 30px 80px rgba(20, 163, 139, .35); }
 
 /* ---------------------------------------------------------------- why Sonela */
 .sn-why-head { max-width: none; }
-.sn-why { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gutter); margin-top: var(--s-8); }
-.sn-why h3 { font-family: var(--font-display); font-weight: 500; font-size: var(--t-card); margin: 0 0 var(--s-2); }
+.sn-why { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-7) var(--gutter); margin-top: var(--s-8); }
+.sn-why__card { display: flex; flex-direction: column; gap: var(--s-4); padding-top: var(--s-6); border-top: 1px solid var(--line-strong); }
+.sn-why__card > img, .sn-why__apps img { width: 40px; height: 40px; display: block; border-radius: 10px; }
+.sn-why__apps { display: flex; gap: var(--s-2); }
+.sn-why__apps img { width: 40px; height: 40px; border-radius: 10px; }
+.sn-ico-mono { filter: invert(1); }
+html[data-look="light"] .sn-ico-mono { filter: none; }
+.sn-why h3 { font-family: var(--font-display); font-weight: 500; font-size: var(--t-card); margin: 0; }
 .sn-why p { margin: 0; color: #c4c4c4; }
 html[data-look="light"] .sn-why p { color: #4d535c; }
 .sn-why a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---------------------------------------------------------------- the close: one button per app */
-.sn-close-btns { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); }
+.sn-close { display: grid; gap: var(--s-6); padding-bottom: var(--s-9); margin-bottom: var(--s-8); }
+.sn-close .section-head { margin: 0; }
+.sn-close-btns { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gutter); width: 100%; }
 .sn-close-btns .btn { justify-content: center; gap: var(--s-3); }
 
 @media (max-width: 1023px) {
-  .sn-split > * { grid-column: 1 / -1; }
-  .sn-split--flip > .sn-pair { grid-row: auto; grid-column: 1 / -1; }
   .sn-why { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sn-split > * { grid-column: 1 / -1; }
 }
 @media (max-width: 639px) {
   .sn-nums { grid-template-columns: 1fr 1fr 1fr; gap: var(--s-3); }
   .sn-nums dd { font-size: 22px; }
-  .sn-band { grid-template-columns: 1fr; gap: var(--s-5); }
-  .sn-band__icon { width: 80px; height: 80px; border-radius: 20px; }
-  .sn-why { grid-template-columns: 1fr; }
+  .sn-why { grid-template-columns: 1fr; gap: var(--s-6); }
+  .sn-why__card { gap: var(--s-2); padding-top: var(--s-4); }
+  .sn-why__apps img, .sn-why__card > img { width: 28px; height: 28px; border-radius: 7px; }
+  .sn-why__card h3 { margin-top: var(--s-1); }
   .sn-close-btns { grid-template-columns: 1fr; }
-  .sn-pair { padding: 12% 10% 0 0; }
 }
 
 /* round 2 (first look): content in the middle of its screen, air between heading / text / buttons, a wider fact card */
@@ -108,8 +117,6 @@ html[data-look="light"] .sn-why p { color: #4d535c; }
 .sn-split .stack-4 { display: flex; flex-direction: column; gap: var(--s-5); }
 .sn-split .stack-4 > * { margin: 0; }
 .sn-split .stack-4 > .sn-kicker { margin-bottom: calc(-1 * var(--s-2)); }
-.sn-band .stack-4 { display: flex; flex-direction: column; gap: var(--s-4); }
-.sn-band .stack-4 > * { margin: 0; }
 .sn-win .ly-float { width: 360px; }
 @media (max-width: 639px) { .sn-win .ly-float { width: auto; left: 12px; right: 12px; bottom: 12px; } }
 
