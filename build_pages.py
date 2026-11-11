@@ -197,10 +197,7 @@ PAGES = [  # file, <title>, <meta description>, nav word marked as current ("" =
           </ul>
           <div class="btn-row"><a class="btn btn--primary sn-dl" href="/aimdot#download"><img src="/aimdot.svg" alt="" width="24" height="24">Download Aimdot</a><a class="btn btn--secondary" href="/aimdot">More about Aimdot</a></div>
         </div>
-        <div class="span-6 start-7 sn-pair">
-          <figure class="sn-shot sn-shot--aimdot"><img src="/img/aimdot-painter.webp" width="1280" height="800" alt="Aimdot's Painter: a crosshair painted pixel by pixel on a grid" loading="lazy"></figure>
-          <figure class="sn-shot sn-shot--aimdot sn-shot--back"><img src="/img/aimdot-presets.webp" width="1280" height="800" alt="Aimdot's preset list: classic crosses, dots, circles and rings" loading="lazy"></figure>
-        </div>
+        <figure class="span-6 start-7 sn-shot sn-shot--aimdot"><img src="/img/aimdot-painter.webp" width="1280" height="800" alt="Aimdot's Painter: a crosshair painted pixel by pixel on a grid" loading="lazy"></figure>
       </div>
     </div>
   </section>
@@ -274,7 +271,7 @@ PAGES = [  # file, <title>, <meta description>, nav word marked as current ("" =
   <section class="hero hero--split sn-apphero" data-enter aria-labelledby="hero-h">
     <div class="wrap"><div class="hero-text grid hero__grid">
       <div class="hero__text span-5">
-        <p class="sn-kicker"><img src="/aimdot.svg" alt="" width="40" height="40">Sonela Aimdot · crosshair overlay</p>
+        <p class="sn-kicker"><img src="/aimdot.svg" alt="" width="40" height="40">Aimdot</p>
         <h1 id="hero-h">A free crosshair overlay for PC games</h1>
         <p class="hero__lead">Your own crosshair on top of any game. Design it or paint it, give each game its own, and turn it on or off with a hotkey.</p>
         <div class="dl-grid" id="download">
@@ -337,7 +334,7 @@ PAGES = [  # file, <title>, <meta description>, nav word marked as current ("" =
   <section class="hero sn-solo" data-enter aria-labelledby="hero-h">
     <div class="wrap">
       <img class="sn-solo__icon" src="/lasso.svg" alt="" width="128" height="128">
-      <p class="sn-kicker sn-kicker--plain">Sonela Lasso · screenshot tool · coming soon</p>
+      <p class="sn-kicker sn-kicker--plain">Lasso · coming soon</p>
       <h1 id="hero-h">A free screenshot tool for Windows and Linux</h1>
       <p class="hero__lead">Draw around any part of the screen, mark it up, then copy, save or share it. Light enough to leave running all the time.</p>
       <div class="btn-row"><span class="btn btn--secondary sn-off" aria-disabled="true">Download · coming soon</span><a class="btn btn--primary" href="https://discord.gg/JPVewEfUQs">Get news on Discord</a></div>
