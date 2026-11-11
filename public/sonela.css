@@ -1,0 +1,231 @@
+/* sonela.app (redesign 11 Nov 2026): page CSS on top of the taste-skill kit, one family with echoclip.link.
+   The Sonela brand is neutral (white on graphite, the logo tile); colour comes from the apps: Echo violet,
+   Aimdot coral, Lasso teal. No inline styles anywhere (the site's CSP is style-src 'self'). */
+
+/* ---------------------------------------------------------------- palette */
+:root {
+  --p-bg: #0a0a0a; --p-surface: #151515; --p-ink: #efefef; --p-muted: #8c8c8c;
+  --p-accent: #f2f3f5; --p-accent-ink: #111317; --p-action: #f2f3f5; --p-action-ink: #111317;
+  --p-inv-bg: #f2f3f5; --p-inv-surface: #ffffff; --p-inv-ink: #111317; --p-inv-muted: #4d535c;
+  --p-inv-accent: #111317; --p-inv-accent-ink: #f2f3f5; --p-inv-action: #111317; --p-inv-action-ink: #f2f3f5;
+  --font-display: "Host Grotesk", system-ui, sans-serif;
+  --font-text: "Host Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --display-weight: 500; --display-tracking: -0.035em; --display-tracking-xl: -0.04em;
+  --echo: #7c5cff; --echo-btn: #6a4cf5; --aimdot: #ef6a4c; --aimdot-btn: #e2553a; --lasso: #14a38b;
+  --accent-rgb: 242, 243, 245;
+}
+/* the lit ground (the statement footer): Sonela's own white tile, never the kit's green */
+html[data-ground] { --ground-bg: #f2f3f5; --ground-surface: #ffffff; --ground-ink: #111317; --ground-muted: #4d535c; --ground-accent: #111317; }
+
+/* ---------------------------------------------------------------- light look (the preview's second option) */
+html[data-look="light"] {
+  --p-bg: #f6f6f4; --p-surface: #ffffff; --p-ink: #111317; --p-muted: #5d636b;
+  --p-accent: #111317; --p-accent-ink: #f2f3f5; --p-action: #111317; --p-action-ink: #f2f3f5;
+  --p-inv-bg: #111317; --p-inv-surface: #1b1d22; --p-inv-ink: #f2f3f5; --p-inv-muted: #9aa1ab;
+  --p-inv-accent: #f2f3f5; --p-inv-accent-ink: #111317; --p-inv-action: #f2f3f5; --p-inv-action-ink: #111317;
+  --accent-rgb: 17, 19, 23; color-scheme: light;
+}
+html[data-look="light"][data-ground] { --ground-bg: #111317; --ground-surface: #1b1d22; --ground-ink: #f2f3f5; --ground-muted: #9aa1ab; --ground-accent: #f2f3f5; }
+
+/* ---------------------------------------------------------------- the logo tile */
+.sn-logo { width: 30px; height: 30px; display: inline-grid; flex: none; }
+.sn-logo svg { width: 100%; height: 100%; display: block; }
+html[data-look="light"] .nav .sn-logo rect { fill: #111317; }
+html[data-look="light"] .nav .sn-logo path { stroke: #f2f3f5; }
+
+/* ---------------------------------------------------------------- hero: one real app window + the fact card */
+.hero__kicker .dot { background: var(--aimdot); }
+.sn-win { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--line-strong); background: #111; position: relative; box-shadow: 0 30px 80px #0008, 0 0 0 1px rgba(239, 106, 76, .12); }
+.sn-win > img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 0 0; }
+.sn-win .ly-float { background: var(--p-surface); color: var(--p-ink); }
+.sn-win .ly-live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--aimdot); }
+
+/* ---------------------------------------------------------------- the app sections */
+.sn-kicker { display: flex; align-items: center; gap: var(--s-3); margin: 0; font-size: var(--t-small); font-weight: 500; color: var(--p-muted); }
+.sn-kicker img { width: 40px; height: 40px; border-radius: 11px; display: block; }
+.sn-split { align-items: center; row-gap: var(--s-7); }
+.sn-split h2 { margin: 0; max-width: 16ch; }
+.sn-split .t-lead { margin: 0; max-width: 40ch; }
+.sn-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); margin: var(--s-2) 0; }
+.sn-nums > div { border-top: 1px solid var(--line); padding-top: var(--s-3); }
+.sn-nums dt { font-size: var(--t-small); color: var(--p-muted); }
+.sn-nums dd { margin: var(--s-1) 0 0; font-family: var(--font-display); font-size: 28px; font-weight: 500; letter-spacing: -0.02em; }
+.sn-points { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-3); }
+.sn-points li { position: relative; padding-left: 26px; color: var(--p-ink); }
+.sn-points li::before { content: ""; position: absolute; left: 2px; top: .45em; width: 11px; height: 6px; border-left: 2px solid var(--aimdot); border-bottom: 2px solid var(--aimdot); transform: rotate(-45deg); }
+.sn-shot { margin: 0; border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--line-strong); background: #111; }
+.sn-shot img { display: block; width: 100%; height: auto; }
+.sn-shot--echo { box-shadow: 0 30px 80px #0008, 0 0 60px rgba(124, 92, 255, .18); }
+.sn-shot--aimdot { box-shadow: 0 30px 80px #0008, 0 0 60px rgba(239, 106, 76, .16); }
+/* the two Aimdot windows overlap: the Painter in front, the presets behind it, higher and to the right */
+.sn-pair { position: relative; padding: 9% 18% 0 0; }
+.sn-pair .sn-shot--back { position: absolute; right: 0; top: 0; width: 56%; z-index: -1; opacity: .9; }
+.sn-split--flip > .sn-pair { grid-row: 1; grid-column: 1 / span 7; }
+/* the app's own colour on its download button */
+.btn.sn-btn-echo { --action: var(--echo-btn); --action-ink: #fff; background: var(--echo-btn); color: #fff; }
+.btn.sn-btn-aimdot { --action: var(--aimdot-btn); --action-ink: #fff; background: var(--aimdot-btn); color: #fff; }
+.btn.sn-btn-echo img, .btn.sn-btn-aimdot img { width: 28px; height: 28px; border-radius: 8px; }
+
+/* ---------------------------------------------------------------- Lasso: the dark band (rhythm), coming next */
+.sn-lasso { background: color-mix(in oklab, var(--p-bg) 70%, #000); }
+html[data-look="light"] .sn-lasso { background: #ebebe7; }
+.sn-band { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s-7); align-items: center; max-width: 900px; margin: auto 0; }
+.sn-band__icon { width: 128px; height: 128px; border-radius: 30px; display: block; box-shadow: 0 20px 60px rgba(20, 163, 139, .25); }
+.sn-kicker--plain { color: var(--lasso); }
+.sn-band h2 { margin: 0; }
+.sn-band .t-lead { margin: 0; max-width: 46ch; }
+
+/* ---------------------------------------------------------------- why Sonela */
+.sn-why-head { max-width: none; }
+.sn-why { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gutter); margin-top: var(--s-8); }
+.sn-why h3 { font-family: var(--font-display); font-weight: 500; font-size: var(--t-card); margin: 0 0 var(--s-2); }
+.sn-why p { margin: 0; color: #c4c4c4; }
+html[data-look="light"] .sn-why p { color: #4d535c; }
+.sn-why a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------------------------------------------------------------- the close: one button per app */
+.sn-close-btns { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); }
+.sn-close-btns .btn { justify-content: center; gap: var(--s-3); }
+
+@media (max-width: 1023px) {
+  .sn-split > * { grid-column: 1 / -1; }
+  .sn-split--flip > .sn-pair { grid-row: auto; grid-column: 1 / -1; }
+  .sn-why { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 639px) {
+  .sn-nums { grid-template-columns: 1fr 1fr 1fr; gap: var(--s-3); }
+  .sn-nums dd { font-size: 22px; }
+  .sn-band { grid-template-columns: 1fr; gap: var(--s-5); }
+  .sn-band__icon { width: 80px; height: 80px; border-radius: 20px; }
+  .sn-why { grid-template-columns: 1fr; }
+  .sn-close-btns { grid-template-columns: 1fr; }
+  .sn-pair { padding: 12% 10% 0 0; }
+}
+
+/* round 2 (first look): content in the middle of its screen, air between heading / text / buttons, a wider fact card */
+.sn-app > .wrap, #why > .wrap, #lasso > .wrap { justify-content: center; }
+.sn-split .stack-4 { display: flex; flex-direction: column; gap: var(--s-5); }
+.sn-split .stack-4 > * { margin: 0; }
+.sn-split .stack-4 > .sn-kicker { margin-bottom: calc(-1 * var(--s-2)); }
+.sn-band .stack-4 { display: flex; flex-direction: column; gap: var(--s-4); }
+.sn-band .stack-4 > * { margin: 0; }
+.sn-win .ly-float { width: 360px; }
+@media (max-width: 639px) { .sn-win .ly-float { width: auto; left: 12px; right: 12px; bottom: 12px; } }
+
+/* =============================================================== subpages (aimdot, lasso, about, privacy, 404) */
+main.sn-sub > section:not(.hero) { height: auto; min-height: 0; padding: var(--s-9) 0; }
+main.sn-sub > section:not(.hero) > .wrap { height: auto; }
+.sn-sub--aimdot { --c: var(--aimdot); --c-btn: var(--aimdot-btn); }
+.sn-sub--lasso { --c: var(--lasso); --c-btn: #0f8f79; }
+
+/* an app page's hero: the kicker with the app's tile, the downloads under the lead */
+.sn-apphero .sn-kicker { margin-bottom: var(--s-4); }
+.sn-apphero h1 { max-width: 14ch; }
+.dl-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); margin-top: var(--s-6); max-width: 520px; }
+.btn.dl { height: auto; min-height: 56px; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; padding: 10px 18px; border-radius: 14px; text-align: left; line-height: 1.3; font-weight: 500; }
+.btn.dl::after { display: none; }
+.btn.dl small { font-size: 12px; font-weight: 400; opacity: .8; }
+/* the Worker's states: "btn off dl" (not in the release yet) and "btn app dl" (a real link to the file) */
+.btn.off { background: var(--p-surface); color: #8c8c8c; border: 1px solid var(--line); cursor: default; box-shadow: none; }
+.btn.app { background: var(--c-btn, var(--aimdot-btn)); color: #fff; border: 0; }
+.btn.app:hover { filter: brightness(1.08); }
+.note { margin: var(--s-4) 0 0; font-size: var(--t-small); color: #a3a3a3; max-width: 52ch; }
+.note a { color: var(--p-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+.dl-ver:empty { display: none; }
+
+/* the What's new list: the Worker writes it into [data-changes]; the filter chips are radio buttons + CSS, no script */
+.sn-changes__head { max-width: 760px; margin-bottom: var(--s-6); }
+.sn-changes__head h2 { margin: 0 0 var(--s-3); }
+.sn-changes__head .sub { color: #c4c4c4; margin: 0; }
+.changes { max-width: 860px; }
+.cnone { color: #a3a3a3; background: var(--p-surface); border: 1px dashed var(--line-strong); border-radius: var(--r-lg); padding: var(--s-6); margin: 0; }
+.cfilter { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 var(--s-5); }
+.cfilter input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.cfilter label { font-size: var(--t-small); font-weight: 500; color: #c4c4c4; border: 1px solid var(--line-strong); border-radius: 999px; padding: 8px 16px; min-height: 40px; display: inline-flex; align-items: center; cursor: pointer; user-select: none; }
+.cfilter label:hover { color: var(--p-ink); }
+.cfilter input:checked + label { color: var(--p-ink); background: var(--p-surface); border-color: var(--c, var(--p-ink)); }
+.cfilter input:focus-visible + label { outline: 2px solid var(--p-ink); outline-offset: 2px; }
+.changes:has(#cf-new:checked) li:not([data-t~="new"]), .changes:has(#cf-new:checked) article:not(:has(li[data-t~="new"])), .changes:has(#cf-new:checked) .cgroup:not(:has(li[data-t~="new"])),
+.changes:has(#cf-fix:checked) li:not([data-t~="fix"]), .changes:has(#cf-fix:checked) article:not(:has(li[data-t~="fix"])), .changes:has(#cf-fix:checked) .cgroup:not(:has(li[data-t~="fix"])),
+.changes:has(#cf-linux:checked) li:not([data-t~="linux"]), .changes:has(#cf-linux:checked) article:not(:has(li[data-t~="linux"])), .changes:has(#cf-linux:checked) .cgroup:not(:has(li[data-t~="linux"])),
+.changes:has(#cf-windows:checked) li:not([data-t~="windows"]), .changes:has(#cf-windows:checked) article:not(:has(li[data-t~="windows"])), .changes:has(#cf-windows:checked) .cgroup:not(:has(li[data-t~="windows"])) { display: none; }
+.changes article { background: var(--p-surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-5) var(--s-6); margin-bottom: var(--s-3); }
+.changes .clatest { border-color: color-mix(in oklab, var(--c, #fff) 55%, transparent); padding: var(--s-6); margin-bottom: var(--s-7); }
+.chead { display: flex; align-items: center; gap: var(--s-3); margin-bottom: var(--s-3); }
+.chead b { font-family: var(--font-display); font-weight: 500; font-size: var(--t-card); }
+.clatest .chead b { font-size: 26px; }
+.chead time { margin-left: auto; color: #a3a3a3; font-size: var(--t-small); }
+.chead .new { font-size: var(--t-label); font-weight: 500; color: var(--c, #fff); border: 1px solid color-mix(in oklab, var(--c, #fff) 60%, transparent); border-radius: 999px; padding: 1px 10px; }
+.changes ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-2); }
+.changes li { display: flex; align-items: baseline; gap: var(--s-3); color: #d6d6d6; line-height: 1.55; }
+.tg { flex: none; font-size: 13px; font-weight: 500; border-radius: 6px; padding: 1px 7px; position: relative; top: -1px; }
+.tg.new { color: #ffb8a6; background: rgba(239, 106, 76, .2); }
+.lasso .tg.new { color: #8fe3d2; background: rgba(20, 163, 139, .2); }
+.tg.fix { color: #ffc48a; background: rgba(240, 163, 90, .16); }
+.tg.linux { color: #f0d873; background: rgba(232, 197, 71, .14); }
+.tg.windows { color: #8fcaf7; background: rgba(90, 176, 240, .16); }
+.cday { font-family: var(--font-text); font-size: var(--t-small); font-weight: 500; color: #c4c4c4; margin: var(--s-6) 0 var(--s-3); }
+.colder > summary { display: inline-flex; margin-top: var(--s-4); cursor: pointer; list-style: none; border: 1px solid var(--line-strong); border-radius: 999px; padding: 8px 18px; font-weight: 500; }
+.colder > summary::-webkit-details-marker { display: none; }
+.colder[open] > summary { display: none; }
+.cnote { margin-top: var(--s-5); font-size: var(--t-small); color: #a3a3a3; }
+
+/* the feature list beside the two Aimdot windows */
+.sn-featlist { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-3); }
+.sn-featlist li { color: #c4c4c4; line-height: 1.5; }
+.sn-featlist b { display: block; color: var(--p-ink); font-weight: 500; }
+.sn-back { margin: var(--s-8) 0 0; }
+.sn-back a { color: var(--p-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+.sn-back a::before { content: "\2190  "; }
+
+/* a centred hero without a screenshot (Lasso before its first version, 404) */
+.sn-solo { height: auto; min-height: 0; padding: calc(var(--nav, 72px) + var(--s-9)) 0 var(--s-9); }
+.sn-solo > .wrap { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-5); }
+.sn-solo h1 { margin: 0; max-width: 16ch; font-family: var(--font-display); font-weight: 500; letter-spacing: var(--display-tracking-xl); font-size: clamp(40px, 3.2vw + 20px, 64px); line-height: 1.04; }
+.sn-solo .hero__lead { margin: 0; max-width: 46ch; }
+.sn-solo__icon { width: 96px; height: 96px; border-radius: 24px; display: block; box-shadow: 0 20px 60px rgba(20, 163, 139, .25); }
+.sn-off { opacity: .55; cursor: default; }
+.sn-solo__feats { list-style: none; margin: var(--s-6) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); width: 100%; }
+.sn-solo__feats li { border-top: 1px solid var(--line); padding-top: var(--s-4); color: #c4c4c4; }
+.sn-solo__feats b { display: block; color: var(--p-ink); font-family: var(--font-display); font-weight: 500; font-size: var(--t-card); margin-bottom: var(--s-2); }
+.sn-404 { list-style: none; margin: var(--s-4) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-6); }
+.sn-404 a::after { content: " \2192"; }
+
+/* about: the three apps as rows */
+.sn-rows { display: grid; gap: var(--s-3); align-self: center; }
+.sn-row { display: flex; align-items: center; gap: var(--s-5); padding: var(--s-5); background: var(--p-surface); border: 1px solid var(--line); border-radius: var(--r-lg); color: var(--p-ink); text-decoration: none; transition: transform .2s, border-color .2s; }
+.sn-row:hover { transform: translateY(-2px); border-color: var(--line-strong); }
+.sn-row img { width: 56px; height: 56px; border-radius: 15px; flex: none; }
+.sn-row b { font-family: var(--font-display); font-weight: 500; font-size: var(--t-card); margin-right: var(--s-3); }
+.sn-row small { display: block; color: #c4c4c4; font-size: var(--t-body); margin-top: 2px; }
+.sn-tag { font-style: normal; font-size: var(--t-label); color: #a3a3a3; border: 1px solid var(--line-strong); border-radius: 999px; padding: 1px 10px; }
+.sn-tag--out { color: #f2f3f5; }
+
+/* about's second part and the privacy page: one readable column */
+main.sn-sub > section.sn-docsec--top { padding-top: calc(var(--nav, 72px) + var(--s-8)); }
+.sn-doc { max-width: 720px; }
+.sn-doc h1 { font-family: var(--font-display); font-weight: 500; letter-spacing: var(--display-tracking-xl); font-size: clamp(40px, 3.2vw + 20px, 64px); line-height: 1.04; margin: 0 0 var(--s-4); }
+.sn-doc h2 { font-family: var(--font-display); font-weight: 500; font-size: clamp(24px, 1vw + 18px, 32px); margin: var(--s-8) 0 var(--s-3); }
+.sn-doc h2:first-child { margin-top: 0; }
+.sn-doc p { color: #dcdcdc; line-height: 1.7; margin: 0 0 var(--s-4); }
+.sn-doc .updated { color: #a3a3a3; font-size: var(--t-small); }
+.sn-doc a { color: var(--p-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+
+/* subpage footer: the homepage's link rows, no closing call, on the dark ground */
+footer.closing.sn-subfoot { height: auto; min-height: 0; padding: var(--s-8) 0 var(--s-6); border-top: 1px solid var(--line); }
+footer.closing.sn-subfoot > .wrap { height: auto; }
+footer.sn-subfoot .sn-logo rect { fill: #f2f3f5; }
+footer.sn-subfoot .sn-logo path { stroke: #111317; }
+
+@media (max-width: 1023px) { .sn-solo__feats { grid-template-columns: 1fr; } }
+@media (max-width: 639px) { .dl-grid { grid-template-columns: 1fr; } .sn-row { padding: var(--s-4); gap: var(--s-4); } }
+
+/* polish: the About hero and Lasso keep to their content (no screen of empty space under them) */
+main.sn-sub > section.sn-about { height: auto; min-height: 0; padding: calc(var(--nav, 72px) + var(--s-8)) 0 var(--s-7); }
+main.sn-sub > section.sn-about .hero__grid { align-items: center; }
+main.sn-sub > section.sn-solo + section { padding-top: var(--s-6); }
+
+/* with scripts blocked (the CSP is script-src 'none' until the owner decides): the phone menu button cannot open, so it
+   is hidden; every link is in the footer. sonela-head.js adds .mo-js when scripts run. */
+html:not(.mo-js) .nav__toggle { display: none; }

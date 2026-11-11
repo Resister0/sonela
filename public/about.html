@@ -1,11 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-type="software" data-radius="round" data-ground="sonela" data-buttons="tonal" data-motion>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>About Sonela - who makes Echo, Aimdot and Lasso</title>
 <meta name="description" content="Sonela is a small family of free, open-source PC gaming tools made by one independent developer: Echo, Aimdot and Lasso.">
-<meta name="theme-color" content="#111317">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
 <!-- seo: managed by seo.py, edit there -->
 <link rel="canonical" href="https://sonela.app/about">
 <meta property="og:url" content="https://sonela.app/about">
@@ -25,51 +27,109 @@
 <link rel="manifest" href="/site.webmanifest">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://sonela.app/#org","name":"Sonela","url":"https://sonela.app/","logo":"https://sonela.app/icon-512.png","email":"support@echoclip.link","sameAs":["https://github.com/Resister0/sonela","https://discord.gg/JPVewEfUQs"]},{"@type":"AboutPage","url":"https://sonela.app/about","name":"About Sonela","about":{"@id":"https://sonela.app/#org"}}]}</script>
 <!-- /seo -->
-<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/assets/system.css">
+<link rel="stylesheet" href="/assets/ui/cards.css">
+<link rel="stylesheet" href="/assets/motion/motion.css">
+<link rel="stylesheet" href="/assets/layout/layout.css">
+<link rel="stylesheet" href="/assets/moments/liquid-type/moment.css">
+<link rel="stylesheet" href="/sonela.css">
+<script src="/sonela-head.js"></script>
+<link rel="modulepreload" href="/assets/moments/moments.js">
 </head>
 <body>
-<header><div class="wrap">
-  <a class="brand" href="/"><svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#f2f3f5"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#111317" stroke-width="6" stroke-linecap="round"/></svg>Sonela</a>
-  <nav>
-    <a href="/#apps">Apps</a>
-    <a href="/about" class="on">About</a>
-    <a href="https://github.com/Resister0/sonela" class="hide-s">GitHub</a>
-  </nav>
-</div></header>
-<main>
-<section class="wrap split">
-  <div>
-    <h1>Small tools.<br>Big games.</h1>
-    <p class="lead">Sonela makes free, open-source apps for PC gamers, made by Resister0, one independent developer. The apps are native, do one job each, and stay light on your PC while you play.</p>
-    <a class="btn" href="https://echoclip.link/">Get Echo</a>
+<header class="nav">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">Skip to content</a>
+    <a class="nav__logo" href="/"><span class="sn-logo" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#f2f3f5"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#111317" stroke-width="6" stroke-linecap="round"/></svg></span>Sonela</a>
+    <nav class="nav__links" aria-label="Main">
+      <div class="nav__item">
+        <a class="nav__link" href="/#apps">Apps <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <div class="nav__menu">
+          <div class="wrap grid">
+            <div class="menu-col span-3">
+              <p class="t-label">Out now</p>
+              <a href="https://echoclip.link/">Echo<span>Game clip recorder, 2.0</span></a>
+              <a href="/aimdot">Aimdot<span>Crosshair overlay, 1.0</span></a>
+            </div>
+            <div class="menu-col span-3">
+              <p class="t-label">Coming next</p>
+              <a href="/lasso">Lasso<span>Screenshot tool</span></a>
+              <a href="https://discord.gg/JPVewEfUQs">Discord<span>News and help</span></a>
+            </div>
+            <a class="menu-card span-3 start-10" href="/aimdot">
+              <div class="panel"><img class="frame__img" src="/img/aimdot-designer-640.webp" alt="Aimdot's Designer: presets, colour and a live preview of the crosshair" width="640" height="400" loading="lazy"></div>
+              <span class="t-card">Aimdot is out</span>
+              <span class="t-small muted">Your own crosshair on any game</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="nav__item"><a class="nav__link" href="https://echoclip.link/">Echo</a></div>
+      <div class="nav__item"><a class="nav__link" href="/aimdot">Aimdot</a></div>
+      <div class="nav__item"><a class="nav__link" href="/about" aria-current="page">About</a></div>
+    </nav>
+    <div class="nav__actions">
+      <a class="nav__link" href="https://github.com/Resister0/sonela">GitHub</a>
+      <a class="btn btn--primary" href="/#apps">Get the apps</a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
   </div>
-  <div class="stack">
-    <a class="row echo" href="https://echoclip.link/"><span class="ico"><img src="/echo.png" alt=""></span><span><b>Echo</b><span class="tag out">Out now · 2.0</span><span class="d">Game clip recorder for Windows and Linux.</span></span></a>
-    <a class="row aimdot" href="/aimdot"><span class="ico"><img src="/aimdot.svg" alt=""></span><span><b>Aimdot</b><span class="tag">Coming soon</span><span class="d">A crosshair overlay for any game.</span></span></a>
-    <a class="row lasso" href="/lasso"><span class="ico"><img src="/lasso.svg" alt=""></span><span><b>Lasso</b><span class="tag">Coming soon</span><span class="d">A screenshot tool: draw around it, mark it up, share it.</span></span></a>
-  </div>
-</section>
+</header>
 
-<article class="doc doc-tight">
-  <h2>Free and open source</h2>
-  <p>The apps are free, with no ads and no tracking. Echo's code is public on <a href="https://github.com/Resister0/echoclip">GitHub</a>
-    under the GPL-3.0 licence, and <a href="https://github.com/Resister0/sonela">this website's code</a> is there too (MIT licence). Echo Cloud, Echo's optional clip storage, has paid plans for people who want more space; that is
-    what pays for the servers.</p>
-  <h2>Get in touch</h2>
-  <p>Questions, bugs and ideas: the <a href="https://discord.gg/JPVewEfUQs">Discord</a> or
-    <a href="mailto:support@echoclip.link">support@echoclip.link</a>.</p>
-</article>
+<main id="top" class="sn-sub sn-sub--about">
+  <section class="hero hero--split sn-about" data-enter aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text grid hero__grid">
+      <div class="hero__text span-5">
+        <h1 id="hero-h">Small tools. Big games.</h1>
+        <p class="hero__lead">Sonela makes free, open-source apps for PC gamers, made by Resister0, one independent developer. The apps are native, do one job each, and stay light on your PC while you play.</p>
+        <div class="btn-row"><a class="btn btn--primary" href="/#apps">See the apps</a><a class="btn btn--secondary" href="https://discord.gg/JPVewEfUQs">Join the Discord</a></div>
+      </div>
+      <div class="span-6 start-7 sn-rows">
+        <a class="sn-row" href="https://echoclip.link/"><img src="/echo.png" alt="" width="56" height="56"><span><b>Echo</b><em class="sn-tag sn-tag--out">Out now · 2.0</em><small>Game clip recorder for Windows and Linux.</small></span></a>
+        <a class="sn-row" href="/aimdot"><img src="/aimdot.svg" alt="" width="56" height="56"><span><b>Aimdot</b><em class="sn-tag sn-tag--out">Out now · 1.0</em><small>A crosshair overlay for any game.</small></span></a>
+        <a class="sn-row" href="/lasso"><img src="/lasso.svg" alt="" width="56" height="56"><span><b>Lasso</b><em class="sn-tag">Coming soon</em><small>A screenshot tool: draw around it, mark it up, share it.</small></span></a>
+      </div>
+    </div></div>
+  </section>
+
+  <section class="section sn-docsec" id="more" aria-labelledby="more-h">
+    <div class="wrap">
+      <article class="sn-doc">
+        <h2 id="more-h">Free and open source</h2>
+        <p>The apps are free, with no ads and no tracking. Echo's code is public on <a href="https://github.com/Resister0/echoclip">GitHub</a> under the GPL-3.0 licence, and <a href="https://github.com/Resister0/sonela">this website's code</a> is there too (MIT licence). Echo Cloud, Echo's optional clip storage, has paid plans for people who want more space; that is what pays for the servers.</p>
+        <h2>Get in touch</h2>
+        <p>Questions, bugs and ideas: the <a href="https://discord.gg/JPVewEfUQs">Discord</a> or <a href="mailto:support@echoclip.link">support@echoclip.link</a>.</p>
+      </article>
+    </div>
+  </section>
 </main>
-<footer><div class="wrap">
-  <span class="wordmark">sonela<i>.</i><i>.</i><i>.</i></span>
-  <span>© 2026 Sonela · Made by Resister0</span>
-  <nav>
-    <a href="/about">About</a>
-    <a href="/privacy">Privacy</a>
-    <a href="https://echoclip.link/">Echo</a>
-    <a href="https://github.com/Resister0/sonela">GitHub</a>
-    <a href="https://discord.gg/JPVewEfUQs">Discord</a>
-  </nav>
-</div></footer>
+
+<footer class="footer closing footer--dark sn-subfoot" id="contact">
+  <div class="wrap">
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="/"><span class="sn-logo" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#111317"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#f2f3f5" stroke-width="6" stroke-linecap="round"/></svg></span>Sonela</a>
+          <p class="footer__lede">Free, light apps for PC gamers. Made by Resister0.</p>
+        </div>
+        <div class="span-2 footer__col"><h3>Apps</h3><ul><li><a href="https://echoclip.link/">Echo</a></li><li><a href="/aimdot">Aimdot</a></li><li><a href="/lasso">Lasso</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Sonela</h3><ul><li><a href="/about">About</a></li><li><a href="/privacy">Privacy</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Community</h3><ul><li><a href="https://discord.gg/JPVewEfUQs">Discord</a></li><li><a href="mailto:support@echoclip.link">Email support</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Source</h3><ul><li><a href="https://github.com/Resister0/sonela">This site</a></li><li><a href="https://github.com/Resister0/echoclip">Echo</a></li></ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 Sonela · Made by Resister0</span>
+        <span>Product names and logos are trademarks of their owners.</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="/assets/system.js"></script>
+<script type="module" src="/assets/motion/motion.js"></script>
+<script type="module" src="/assets/layout/layout.js"></script>
 </body>
 </html>

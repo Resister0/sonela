@@ -194,7 +194,7 @@ async function changesOf(env, app) {
 // The list as HTML, written into the page's <div data-changes> (the site runs no scripts). Same look and rules as
 // echoclip.link/changelog: the newest version as a big card, the older ones grouped by day. Each text is split into
 // its parts (commas, sentence ends - not inside quotes or brackets) and every part gets a tag (New / Fix / Linux /
-// Windows). The filter buttons are radio buttons + CSS (style.css, ".cfilter"); "Show older versions" is a <details>.
+// Windows). The filter buttons are radio buttons + CSS (sonela.css, ".cfilter"); "Show older versions" is a <details>.
 const SHOW = 8;   // older versions shown before "Show older versions"
 const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const dateOf = (t, o) => new Date(t * 1000).toLocaleDateString("en-GB", { ...o, timeZone: "UTC" });

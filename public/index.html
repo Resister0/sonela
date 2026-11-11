@@ -1,11 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-type="software" data-radius="round" data-ground="sonela" data-buttons="tonal" data-motion>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sonela - free, lightweight tools for PC gamers</title>
 <meta name="description" content="Free, open-source gaming tools that stay light on your PC: Echo the game clip recorder, the Aimdot crosshair and the Lasso screenshot tool. No ads.">
-<meta name="theme-color" content="#111317">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
 <!-- seo: managed by seo.py, edit there -->
 <link rel="canonical" href="https://sonela.app/">
 <meta property="og:url" content="https://sonela.app/">
@@ -25,102 +27,180 @@
 <link rel="manifest" href="/site.webmanifest">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://sonela.app/#site","name":"Sonela","url":"https://sonela.app/","description":"Free, open-source gaming tools that stay light on your PC: Echo the game clip recorder, the Aimdot crosshair and the Lasso screenshot tool. No ads.","publisher":{"@id":"https://sonela.app/#org"}},{"@type":"Organization","@id":"https://sonela.app/#org","name":"Sonela","url":"https://sonela.app/","logo":"https://sonela.app/icon-512.png","email":"support@echoclip.link","sameAs":["https://github.com/Resister0/sonela","https://discord.gg/JPVewEfUQs"]},{"@type":"ItemList","@id":"https://sonela.app/#apps","name":"Apps by Sonela","itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"SoftwareApplication","name":"Echo","description":"Game clip recorder for Windows and Linux","operatingSystem":"Windows, Linux","isAccessibleForFree":true,"publisher":{"@id":"https://sonela.app/#org"},"url":"https://echoclip.link/"}},{"@type":"ListItem","position":2,"item":{"@type":"SoftwareApplication","name":"Sonela Aimdot","description":"Crosshair overlay","operatingSystem":"Windows, Linux","isAccessibleForFree":true,"publisher":{"@id":"https://sonela.app/#org"},"url":"https://sonela.app/aimdot"}},{"@type":"ListItem","position":3,"item":{"@type":"SoftwareApplication","name":"Sonela Lasso","description":"Screenshot and snipping tool (coming soon)","operatingSystem":"Windows, Linux","isAccessibleForFree":true,"publisher":{"@id":"https://sonela.app/#org"},"url":"https://sonela.app/lasso"}}]}]}</script>
 <!-- /seo -->
-<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/assets/system.css">
+<link rel="stylesheet" href="/assets/ui/cards.css">
+<link rel="stylesheet" href="/assets/motion/motion.css">
+<link rel="stylesheet" href="/assets/layout/layout.css">
+<link rel="stylesheet" href="/assets/moments/liquid-type/moment.css">
+<link rel="stylesheet" href="/sonela.css">
+<script src="/sonela-head.js"></script>
+<link rel="modulepreload" href="/assets/moments/moments.js">
 </head>
 <body>
-<header><div class="wrap">
-  <a class="brand" href="/"><svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#f2f3f5"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#111317" stroke-width="6" stroke-linecap="round"/></svg>Sonela</a>
-  <nav>
-    <a href="/#apps" class="on">Apps</a>
-    <a href="/about">About</a>
-    <a href="https://github.com/Resister0/sonela" class="hide-s">GitHub</a>
-  </nav>
-</div></header>
-<main>
-<section class="show-hero">
-  <div class="wrap">
-    <span class="hero-logo"><svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#f2f3f5"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#111317" stroke-width="6" stroke-linecap="round"/></svg></span>
-    <h1>Tools that stay out <br>of your game's way.</h1>
-    <p>Free apps for PC gamers. Light on your PC, no ads, no accounts. Open source. Windows and Linux.</p>
-    <nav class="app-jump" aria-label="The apps">
-      <a href="#echo"><img src="/echo.png" alt="" width="56" height="56"><span>Echo</span></a>
-      <a href="#aimdot"><img src="/aimdot.svg" alt="" width="56" height="56"><span>Aimdot</span></a>
-      <a href="#lasso"><img src="/lasso.svg" alt="" width="56" height="56"><span>Lasso</span></a>
+<header class="nav">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">Skip to content</a>
+    <a class="nav__logo" href="/"><span class="sn-logo" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#f2f3f5"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#111317" stroke-width="6" stroke-linecap="round"/></svg></span>Sonela</a>
+    <nav class="nav__links" aria-label="Main">
+      <div class="nav__item">
+        <a class="nav__link" href="/#apps">Apps <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <div class="nav__menu">
+          <div class="wrap grid">
+            <div class="menu-col span-3">
+              <p class="t-label">Out now</p>
+              <a href="https://echoclip.link/">Echo<span>Game clip recorder, 2.0</span></a>
+              <a href="/aimdot">Aimdot<span>Crosshair overlay, 1.0</span></a>
+            </div>
+            <div class="menu-col span-3">
+              <p class="t-label">Coming next</p>
+              <a href="/lasso">Lasso<span>Screenshot tool</span></a>
+              <a href="https://discord.gg/JPVewEfUQs">Discord<span>News and help</span></a>
+            </div>
+            <a class="menu-card span-3 start-10" href="/aimdot">
+              <div class="panel"><img class="frame__img" src="/img/aimdot-designer-640.webp" alt="Aimdot's Designer: presets, colour and a live preview of the crosshair" width="640" height="400" loading="lazy"></div>
+              <span class="t-card">Aimdot is out</span>
+              <span class="t-small muted">Your own crosshair on any game</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="nav__item"><a class="nav__link" href="https://echoclip.link/">Echo</a></div>
+      <div class="nav__item"><a class="nav__link" href="/aimdot">Aimdot</a></div>
+      <div class="nav__item"><a class="nav__link" href="/about">About</a></div>
     </nav>
-  </div>
-</section>
-
-<section id="apps">
-  <div class="wrap">
-    <article class="show echo" id="echo">
-      <div class="show-text">
-        <img class="app-icon" src="/echo.png" alt="" width="72" height="72">
-        <p class="kicker">Game clip recorder · out now</p>
-        <h2>Echo</h2>
-        <p class="lead">Records your game in the background. Press one key to save the last moments, then trim them and share them on Discord.</p>
-        <div class="nums">
-          <div><b>~150 MB</b><small>memory while recording</small></div>
-          <div><b>0.6 %</b><small>CPU while recording</small></div>
-          <div><b>0</b><small>ads or accounts needed</small></div>
-        </div>
-        <p class="cta-row"><a class="btn app" href="https://echoclip.link/download">Download Echo</a>
-          <a class="btn ghost" href="https://echoclip.link/">echoclip.link</a></p>
-        <p class="small"><a href="https://github.com/Resister0/echoclip">Code on GitHub</a> · Windows and Linux</p>
-      </div>
-      <figure class="shot"><img src="/echo-library.webp" srcset="/echo-library-800.webp 800w, /echo-library.webp 1600w"
-        sizes="(max-width:1000px) 92vw, 620px" width="1600" height="869"
-        alt="Echo's clip library: this week's clips, each with a preview, its game and its length"></figure>
-    </article>
-
-    <article class="show aimdot" id="aimdot">
-      <div class="show-text">
-        <img class="app-icon" src="/aimdot.svg" alt="" width="72" height="72">
-        <p class="kicker">Crosshair overlay · out now</p>
-        <h2>Aimdot</h2>
-        <p class="lead">Your own crosshair on top of any game. Pick a preset, design your own or paint it pixel by pixel - one per game, and on or off with one key.</p>
-        <div class="nums">
-          <div><b>120+</b><small>crosshair presets</small></div>
-          <div><b>1 key</b><small>to show or hide it</small></div>
-          <div><b>0</b><small>ads or accounts needed</small></div>
-        </div>
-        <p class="cta-row"><a class="btn app" href="/aimdot#download">Download Aimdot</a>
-          <a class="btn ghost" href="/aimdot">More about Aimdot</a></p>
-        <p class="small"><a href="https://github.com/Resister0/aimdot">Code on GitHub</a> · Windows and Linux</p>
-      </div>
-      <figure class="shot"><img src="/aimdot-designer.jpg" srcset="/aimdot-designer-800.jpg 800w, /aimdot-designer.jpg 1280w"
-        sizes="(max-width:1000px) 92vw, 620px" width="1280" height="800"
-        alt="Aimdot's Designer: crosshair presets and a live preview over a game-like background"></figure>
-    </article>
-
-    <div class="soon-row one">
-      <article class="show-card lasso" id="lasso">
-        <img class="app-icon" src="/lasso.svg" alt="" width="64" height="64">
-        <p class="kicker">Screenshot tool · coming soon</p>
-        <h2>Lasso</h2>
-        <p>Draw around any part of the screen, mark it up, then copy, save or share it. Light enough to leave running all the time.</p>
-        <a class="app-link" href="/lasso">More about Lasso →</a>
-      </article>
+    <div class="nav__actions">
+      <a class="nav__link" href="https://github.com/Resister0/sonela">GitHub</a>
+      <a class="btn btn--primary" href="/#apps">Get the apps</a>
     </div>
-
-    <div class="why">
-      <div><h3>Light on your PC</h3><p>Native apps built in Rust, not a web browser in disguise. Echo uses about 150 MB of memory while recording.</p></div>
-      <div><h3>Free, no catch</h3><p>No ads, no tracking and no paid version of the apps. Echo's optional cloud storage has paid plans for more space.</p></div>
-      <div><h3>Open source</h3><p>The code is on GitHub, so anyone can check what the apps do.</p></div>
-      <div><h3>Windows and Linux</h3><p>Windows 10 and 11, and Linux, including Steam Deck and Bazzite through Flatpak.</p></div>
-    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
   </div>
-</section>
+</header>
+
+<main id="top">
+  <section class="hero hero--split" data-enter aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text grid hero__grid">
+      <div class="hero__text span-5">
+        <p class="hero__kicker"><span class="dot" aria-hidden="true"></span>Echo 2.0 and Aimdot 1.0 are out</p>
+        <h1 id="hero-h">Free, light apps for PC gamers</h1>
+        <p class="hero__lead">Small native apps that stay out of your game's way. Echo saves the clip you just played, Aimdot puts your own crosshair on any game. No ads, no accounts, open source.</p>
+        <div class="btn-row"><a class="btn btn--primary" href="#apps">See the apps</a><a class="btn btn--secondary" href="https://discord.gg/JPVewEfUQs">Join the Discord</a></div>
+      </div>
+      <div class="hero__media span-6 start-7 sn-win">
+        <img src="/img/aimdot-designer.webp" srcset="/img/aimdot-designer-640.webp 640w, /img/aimdot-designer.webp 1280w" sizes="(max-width: 1023px) 92vw, 46vw" width="1280" height="800" alt="The real Aimdot app: the Designer with crosshair presets, colour settings and a live preview" fetchpriority="high">
+        <div class="ly-float">
+          <div class="ly-float__row"><span class="ly-live">Aimdot's overlay, in a game</span><span>measured</span></div>
+          <div class="ly-float__title">About 3.5 MB of memory, no CPU while idle</div>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <section class="section sn-app sn-echo" id="apps" aria-labelledby="echo-h">
+    <div class="wrap">
+      <div class="grid grid--top sn-split">
+        <div class="span-5 stack-4">
+          <p class="sn-kicker"><img src="/echo.png" alt="" width="40" height="40">Game clip recorder · out now</p>
+          <h2 id="echo-h">Echo saves the clip you just played</h2>
+          <p class="t-lead">Echo keeps the last minutes of your game ready. Press one key and they become a clip to trim and share on Discord.</p>
+          <dl class="sn-nums">
+            <div><dt>Memory while recording</dt><dd>~150 MB</dd></div>
+            <div><dt>CPU while recording</dt><dd>~0.6 %</dd></div>
+            <div><dt>Ads or accounts</dt><dd>0</dd></div>
+          </dl>
+          <div class="btn-row"><a class="btn btn--primary sn-btn-echo" href="https://echoclip.link/download">Download Echo</a><a class="btn btn--secondary" href="https://echoclip.link/">Visit echoclip.link</a></div>
+        </div>
+        <figure class="span-7 start-6 sn-shot sn-shot--echo"><img src="/img/echo-library.webp" srcset="/img/echo-library-960.webp 960w, /img/echo-library.webp 1920w" sizes="(max-width: 1023px) 92vw, 56vw" width="1920" height="1043" alt="The real Echo app: the clip library with this week's clips, game folders and the recording status" loading="lazy"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section sn-app sn-aimdot" id="aimdot" aria-labelledby="aimdot-h">
+    <div class="wrap">
+      <div class="grid grid--top sn-split sn-split--flip">
+        <div class="span-5 start-8 stack-4">
+          <p class="sn-kicker"><img src="/aimdot.svg" alt="" width="40" height="40">Crosshair overlay · out now</p>
+          <h2 id="aimdot-h">Aimdot puts your own crosshair on any game</h2>
+          <p class="t-lead">Design it or paint it pixel by pixel, give each game its own, and show or hide it with a hotkey.</p>
+          <ul class="sn-points">
+            <li>Over 100 presets, or your own picture</li>
+            <li>Share a crosshair as a short code, or bring yours from CS2 or Valorant</li>
+            <li>Game Bar mode for exclusive fullscreen on Windows</li>
+          </ul>
+          <div class="btn-row"><a class="btn btn--primary sn-btn-aimdot" href="/aimdot#download">Download Aimdot</a><a class="btn btn--secondary" href="/aimdot">More about Aimdot</a></div>
+        </div>
+        <div class="span-7 sn-pair">
+          <figure class="sn-shot sn-shot--aimdot"><img src="/img/aimdot-painter.webp" srcset="/img/aimdot-painter-640.webp 640w, /img/aimdot-painter.webp 1280w" sizes="(max-width: 1023px) 80vw, 44vw" width="1280" height="800" alt="Aimdot's Painter: a crosshair painted pixel by pixel on a grid" loading="lazy"></figure>
+          <figure class="sn-shot sn-shot--aimdot sn-shot--back"><img src="/img/aimdot-presets.webp" srcset="/img/aimdot-presets-640.webp 640w, /img/aimdot-presets.webp 1280w" sizes="(max-width: 1023px) 60vw, 30vw" width="1280" height="800" alt="Aimdot's preset list: classic crosses, dots, circles and rings" loading="lazy"></figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section sn-lasso" id="lasso" aria-labelledby="lasso-h">
+    <div class="wrap">
+      <div class="sn-band">
+        <img class="sn-band__icon" src="/lasso.svg" alt="" width="96" height="96">
+        <div class="stack-4">
+          <p class="sn-kicker sn-kicker--plain">Screenshot tool · coming next</p>
+          <h2 id="lasso-h">Lasso, for screenshots</h2>
+          <p class="t-lead">Draw around any part of the screen, mark it up, then copy, save or share it. Light enough to leave running all the time.</p>
+          <div class="btn-row"><a class="btn btn--secondary" href="https://discord.gg/JPVewEfUQs">Get news on Discord</a><a class="btn btn--secondary" href="/lasso">More about Lasso</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="why" aria-labelledby="why-h">
+    <div class="wrap">
+      <div data-moment="liquid-type" class="section-head sn-why-head">
+        <h2 class="mo-lt__type" id="why-h">Native. Free. Open.</h2>
+      </div>
+      <div class="sn-why">
+        <div><h3>Light on your PC</h3><p>Native apps built in Rust, not a web browser in disguise. Echo uses about 150 MB of memory while recording.</p></div>
+        <div><h3>Free, no catch</h3><p>No ads, no tracking and no paid version of the apps. Echo's optional cloud storage has paid plans for more space.</p></div>
+        <div><h3>Open source</h3><p>The code is on <a href="https://github.com/Resister0">GitHub</a>, so anyone can check what the apps do.</p></div>
+        <div><h3>Windows and Linux</h3><p>Windows 10 and 11, and Linux, including Steam Deck and Bazzite through Flatpak.</p></div>
+      </div>
+    </div>
+  </section>
 </main>
-<footer><div class="wrap">
-  <span class="wordmark">sonela<i>.</i><i>.</i><i>.</i></span>
-  <span>© 2026 Sonela · Made by Resister0</span>
-  <nav>
-    <a href="/about">About</a>
-    <a href="/privacy">Privacy</a>
-    <a href="https://echoclip.link/">Echo</a>
-    <a href="https://github.com/Resister0/sonela">GitHub</a>
-    <a href="https://discord.gg/JPVewEfUQs">Discord</a>
-  </nav>
-</div></footer>
+
+<footer class="footer closing footer--statement" id="contact" aria-labelledby="close-h">
+  <div class="wrap">
+    <div class="closing__cta close--type cta-type">
+      <div class="section-head">
+        <h2 id="close-h">Get the apps</h2>
+        <p>Free on Windows and Linux. No ads, no account.</p>
+      </div>
+      <div class="sn-close-btns">
+        <a class="btn btn--primary btn--xl sn-btn-echo" href="https://echoclip.link/download"><img src="/echo.png" alt="" width="28" height="28">Download Echo</a>
+        <a class="btn btn--primary btn--xl sn-btn-aimdot" href="/aimdot#download"><img src="/aimdot.svg" alt="" width="28" height="28">Download Aimdot</a>
+      </div>
+    </div>
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="/"><span class="sn-logo" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#111317"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#f2f3f5" stroke-width="6" stroke-linecap="round"/></svg></span>Sonela</a>
+          <p class="footer__lede">Free, light apps for PC gamers. Made by Resister0.</p>
+        </div>
+        <div class="span-2 footer__col"><h3>Apps</h3><ul><li><a href="https://echoclip.link/">Echo</a></li><li><a href="/aimdot">Aimdot</a></li><li><a href="/lasso">Lasso</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Sonela</h3><ul><li><a href="/about">About</a></li><li><a href="/privacy">Privacy</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Community</h3><ul><li><a href="https://discord.gg/JPVewEfUQs">Discord</a></li><li><a href="mailto:support@echoclip.link">Email support</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Source</h3><ul><li><a href="https://github.com/Resister0/sonela">This site</a></li><li><a href="https://github.com/Resister0/echoclip">Echo</a></li></ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 Sonela · Made by Resister0</span>
+        <span>Product names and logos are trademarks of their owners.</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="/assets/system.js"></script>
+<script type="module" src="/assets/motion/motion.js"></script>
+<script type="module" src="/assets/layout/layout.js"></script>
 </body>
 </html>

@@ -1,11 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-type="software" data-radius="round" data-ground="sonela" data-buttons="tonal" data-motion>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sonela Aimdot - a free crosshair overlay for PC games</title>
 <meta name="description" content="Sonela Aimdot puts your own crosshair on top of any PC game: design or paint it, one per game, share codes, CS2 and Valorant import. Windows and Linux.">
-<meta name="theme-color" content="#111317">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
 <!-- seo: managed by seo.py, edit there -->
 <link rel="canonical" href="https://sonela.app/aimdot">
 <meta property="og:url" content="https://sonela.app/aimdot">
@@ -24,71 +26,140 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <!-- /seo -->
-<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/assets/system.css">
+<link rel="stylesheet" href="/assets/ui/cards.css">
+<link rel="stylesheet" href="/assets/motion/motion.css">
+<link rel="stylesheet" href="/assets/layout/layout.css">
+<link rel="stylesheet" href="/assets/moments/liquid-type/moment.css">
+<link rel="stylesheet" href="/sonela.css">
+<script src="/sonela-head.js"></script>
+<link rel="modulepreload" href="/assets/moments/moments.js">
 </head>
 <body>
-<header><div class="wrap">
-  <a class="brand" href="/"><svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#f2f3f5"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#111317" stroke-width="6" stroke-linecap="round"/></svg>Sonela</a>
-  <nav>
-    <a href="/#apps" class="on">Apps</a>
-    <a href="/about">About</a>
-    <a href="https://github.com/Resister0/sonela" class="hide-s">GitHub</a>
-  </nav>
-</div></header>
-<main>
-<section class="app-hero aimdot">
-  <div class="wrap">
-    <span class="ico big"><img src="/aimdot.svg" alt=""></span>
-    <p class="kicker">Sonela Aimdot · Crosshair overlay</p>
-    <h1>Aimdot</h1>
-    <p class="lead">Your own crosshair on top of any game. Design it or paint it, give each game its own, and turn it on or off with a hotkey.</p>
-    <div class="dl-grid" id="download">
+<header class="nav">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">Skip to content</a>
+    <a class="nav__logo" href="/"><span class="sn-logo" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#f2f3f5"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#111317" stroke-width="6" stroke-linecap="round"/></svg></span>Sonela</a>
+    <nav class="nav__links" aria-label="Main">
+      <div class="nav__item">
+        <a class="nav__link" href="/#apps">Apps <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <div class="nav__menu">
+          <div class="wrap grid">
+            <div class="menu-col span-3">
+              <p class="t-label">Out now</p>
+              <a href="https://echoclip.link/">Echo<span>Game clip recorder, 2.0</span></a>
+              <a href="/aimdot">Aimdot<span>Crosshair overlay, 1.0</span></a>
+            </div>
+            <div class="menu-col span-3">
+              <p class="t-label">Coming next</p>
+              <a href="/lasso">Lasso<span>Screenshot tool</span></a>
+              <a href="https://discord.gg/JPVewEfUQs">Discord<span>News and help</span></a>
+            </div>
+            <a class="menu-card span-3 start-10" href="/aimdot">
+              <div class="panel"><img class="frame__img" src="/img/aimdot-designer-640.webp" alt="Aimdot's Designer: presets, colour and a live preview of the crosshair" width="640" height="400" loading="lazy"></div>
+              <span class="t-card">Aimdot is out</span>
+              <span class="t-small muted">Your own crosshair on any game</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="nav__item"><a class="nav__link" href="https://echoclip.link/">Echo</a></div>
+      <div class="nav__item"><a class="nav__link" href="/aimdot" aria-current="page">Aimdot</a></div>
+      <div class="nav__item"><a class="nav__link" href="/about">About</a></div>
+    </nav>
+    <div class="nav__actions">
+      <a class="nav__link" href="https://github.com/Resister0/sonela">GitHub</a>
+      <a class="btn btn--primary" href="/#apps">Get the apps</a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="top" class="sn-sub sn-sub--aimdot">
+  <section class="hero hero--split sn-apphero" data-enter aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text grid hero__grid">
+      <div class="hero__text span-5">
+        <p class="sn-kicker"><img src="/aimdot.svg" alt="" width="40" height="40">Sonela Aimdot · crosshair overlay</p>
+        <h1 id="hero-h">A free crosshair overlay for PC games</h1>
+        <p class="hero__lead">Your own crosshair on top of any game. Design it or paint it, give each game its own, and turn it on or off with a hotkey.</p>
+        <div class="dl-grid" id="download">
       <span class="btn off dl" data-dl="windows" aria-disabled="true"><span>Windows (installer)</span><small data-dl-soon="windows">Coming soon</small></span>
       <span class="btn off dl" data-dl="windows-portable" aria-disabled="true"><span>Windows (portable zip)</span><small data-dl-soon="windows-portable">Coming soon</small></span>
       <span class="btn off dl" data-dl="linux" aria-disabled="true"><span>Linux (AppImage)</span><small data-dl-soon="linux">Coming soon</small></span>
       <span class="btn off dl" data-dl="linux-tar" aria-disabled="true"><span>Linux (tar.gz)</span><small data-dl-soon="linux-tar">Coming soon</small></span>
     </div>
-    <p class="note dl-ver" data-dl-version></p>
-    <p class="cta"><a class="btn ghost" href="https://discord.gg/JPVewEfUQs">Get news on Discord</a></p>
-    <p class="note">Free and open source. No ads, no account.</p>
-  </div>
-</section>
+        <p class="note dl-ver" data-dl-version></p>
+        <p class="note">Free and open source. No ads, no account. <a href="https://discord.gg/JPVewEfUQs">Get news on Discord</a></p>
+      </div>
+      <div class="hero__media span-6 start-7 sn-win">
+        <img src="/img/aimdot-designer.webp" srcset="/img/aimdot-designer-640.webp 640w, /img/aimdot-designer.webp 1280w" sizes="(max-width: 1023px) 92vw, 46vw" width="1280" height="800" alt="The real Aimdot app: the Designer with crosshair presets, colour settings and a live preview" fetchpriority="high">
+      </div>
+    </div></div>
+  </section>
 
-<section class="aimdot whatsnew" id="changes">
-  <div class="wrap">
-    <h2>What's new</h2>
-    <p class="sub">Every version, newest first. Aimdot updates itself, and news about new versions goes out on Discord.</p>
-    <div class="changes" data-changes="aimdot"><p class="cnone">No versions yet. The first one is on its way.</p></div>
-  </div>
-</section>
-
-<section class="aimdot">
-  <div class="wrap">
-    <div class="feats">
-      <div><h3>Design it</h3><p>Pick the shape, colour, size, gap and outline, and watch it change as you go.</p></div>
-      <div><h3>Or paint it</h3><p>Draw your crosshair pixel by pixel, with layers and animation.</p></div>
-      <div><h3>Use a picture</h3><p>Any image of your own can be your crosshair.</p></div>
-      <div><h3>One per game</h3><p>Give each game its own crosshair. Aimdot switches when the game starts.</p></div>
-      <div><h3>Share codes</h3><p>Send your crosshair to a friend as a short code, or bring yours over from CS2 or Valorant.</p></div>
-      <div><h3>Hotkeys</h3><p>Show, hide or switch crosshairs without leaving the game.</p></div>
-      <div><h3>Out of the way</h3><p>Lives in the tray and can start with your PC.</p></div>
-      <div><h3>Game Bar mode</h3><p>On Windows, it also shows over games in exclusive fullscreen.</p></div>
-      <div><h3>Very light</h3><p>A small native app. You won't notice it while you play.</p></div>
+  <section class="section sn-changes aimdot" id="changes" aria-labelledby="changes-h">
+    <div class="wrap">
+      <div class="sn-changes__head">
+        <h2 id="changes-h">What's new in Aimdot</h2>
+        <p class="sub">Every version, newest first. Aimdot updates itself, and news about new versions goes out on Discord.</p>
+      </div>
+      <div class="changes" data-changes="aimdot"><p class="cnone">No versions yet. The first one is on its way.</p></div>
     </div>
-    <p class="back"><a href="/#apps">← All Sonela apps</a></p>
-  </div>
-</section>
+  </section>
+
+  <section class="section sn-feats" id="features" aria-labelledby="feats-h">
+    <div class="wrap">
+      <div class="grid grid--top sn-split">
+        <div class="span-5 stack-4">
+          <h2 id="feats-h">Everything Aimdot does</h2>
+          <ul class="sn-featlist">
+            <li><b>Design it</b> Pick the shape, colour, size, gap and outline, and watch it change as you go.</li>
+            <li><b>Or paint it</b> Draw your crosshair pixel by pixel, with layers and animation.</li>
+            <li><b>Use a picture</b> Any image of your own can be your crosshair.</li>
+            <li><b>One per game</b> Give each game its own crosshair. Aimdot switches when the game starts.</li>
+            <li><b>Share codes</b> Send your crosshair to a friend as a short code, or bring yours over from CS2 or Valorant.</li>
+            <li><b>Hotkeys</b> Show, hide or switch crosshairs without leaving the game.</li>
+            <li><b>Out of the way</b> Lives in the tray and can start with your PC.</li>
+            <li><b>Game Bar mode</b> On Windows, it also shows over games in exclusive fullscreen.</li>
+            <li><b>Very light</b> A small native app. You won't notice it while you play.</li>
+          </ul>
+        </div>
+        <div class="span-7 start-6 sn-pair">
+          <figure class="sn-shot sn-shot--aimdot"><img src="/img/aimdot-painter.webp" srcset="/img/aimdot-painter-640.webp 640w, /img/aimdot-painter.webp 1280w" sizes="(max-width: 1023px) 80vw, 44vw" width="1280" height="800" alt="Aimdot's Painter: a crosshair painted pixel by pixel on a grid" loading="lazy"></figure>
+          <figure class="sn-shot sn-shot--aimdot sn-shot--back"><img src="/img/aimdot-presets.webp" srcset="/img/aimdot-presets-640.webp 640w, /img/aimdot-presets.webp 1280w" sizes="(max-width: 1023px) 60vw, 30vw" width="1280" height="800" alt="Aimdot's preset list: 106 crosshairs in classic crosses, dots, circles and rings" loading="lazy"></figure>
+        </div>
+      </div>
+      <p class="sn-back"><a href="/#apps">All Sonela apps</a></p>
+    </div>
+  </section>
 </main>
-<footer><div class="wrap">
-  <span class="wordmark">sonela<i>.</i><i>.</i><i>.</i></span>
-  <span>© 2026 Sonela · Made by Resister0</span>
-  <nav>
-    <a href="/about">About</a>
-    <a href="/privacy">Privacy</a>
-    <a href="https://echoclip.link/">Echo</a>
-    <a href="https://github.com/Resister0/sonela">GitHub</a>
-    <a href="https://discord.gg/JPVewEfUQs">Discord</a>
-  </nav>
-</div></footer>
+
+<footer class="footer closing footer--dark sn-subfoot" id="contact">
+  <div class="wrap">
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="/"><span class="sn-logo" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#111317"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#f2f3f5" stroke-width="6" stroke-linecap="round"/></svg></span>Sonela</a>
+          <p class="footer__lede">Free, light apps for PC gamers. Made by Resister0.</p>
+        </div>
+        <div class="span-2 footer__col"><h3>Apps</h3><ul><li><a href="https://echoclip.link/">Echo</a></li><li><a href="/aimdot">Aimdot</a></li><li><a href="/lasso">Lasso</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Sonela</h3><ul><li><a href="/about">About</a></li><li><a href="/privacy">Privacy</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Community</h3><ul><li><a href="https://discord.gg/JPVewEfUQs">Discord</a></li><li><a href="mailto:support@echoclip.link">Email support</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Source</h3><ul><li><a href="https://github.com/Resister0/sonela">This site</a></li><li><a href="https://github.com/Resister0/echoclip">Echo</a></li></ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 Sonela · Made by Resister0</span>
+        <span>Product names and logos are trademarks of their owners.</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="/assets/system.js"></script>
+<script type="module" src="/assets/motion/motion.js"></script>
+<script type="module" src="/assets/layout/layout.js"></script>
 </body>
 </html>

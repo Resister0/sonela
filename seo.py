@@ -29,7 +29,7 @@ PRIORITY = {"/": "1.0", "/about": "0.6", "/aimdot": "0.7", "/lasso": "0.7", "/pr
 # the apps, in the order of the homepage cards (JSON-LD ItemList).
 APPS = [
     {"name": "Echo", "url": "https://echoclip.link/", "about": "Game clip recorder for Windows and Linux"},
-    {"name": f"{BRAND} Aimdot", "url": f"{ORIGIN}/aimdot", "about": "Crosshair overlay (coming soon)"},
+    {"name": f"{BRAND} Aimdot", "url": f"{ORIGIN}/aimdot", "about": "Crosshair overlay"},
     {"name": f"{BRAND} Lasso", "url": f"{ORIGIN}/lasso", "about": "Screenshot and snipping tool (coming soon)"},
 ]
 

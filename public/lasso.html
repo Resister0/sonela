@@ -1,11 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-type="software" data-radius="round" data-ground="sonela" data-buttons="tonal" data-motion>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sonela Lasso - a free screenshot tool for Windows and Linux</title>
 <meta name="description" content="Sonela Lasso: draw around any part of the screen, mark it up, then copy, save or share it. Free and open source. Coming soon.">
-<meta name="theme-color" content="#111317">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
 <!-- seo: managed by seo.py, edit there -->
 <link rel="canonical" href="https://sonela.app/lasso">
 <meta property="og:url" content="https://sonela.app/lasso">
@@ -24,59 +26,109 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <!-- /seo -->
-<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/assets/system.css">
+<link rel="stylesheet" href="/assets/ui/cards.css">
+<link rel="stylesheet" href="/assets/motion/motion.css">
+<link rel="stylesheet" href="/assets/layout/layout.css">
+<link rel="stylesheet" href="/assets/moments/liquid-type/moment.css">
+<link rel="stylesheet" href="/sonela.css">
+<script src="/sonela-head.js"></script>
+<link rel="modulepreload" href="/assets/moments/moments.js">
 </head>
 <body>
-<header><div class="wrap">
-  <a class="brand" href="/"><svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#f2f3f5"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#111317" stroke-width="6" stroke-linecap="round"/></svg>Sonela</a>
-  <nav>
-    <a href="/#apps" class="on">Apps</a>
-    <a href="/about">About</a>
-    <a href="https://github.com/Resister0/sonela" class="hide-s">GitHub</a>
-  </nav>
-</div></header>
-<main>
-<section class="app-hero lasso">
-  <div class="wrap">
-    <span class="ico big"><img src="/lasso.svg" alt=""></span>
-    <p class="kicker">Sonela Lasso · Screenshot tool</p>
-    <h1>Lasso</h1>
-    <p class="lead">Draw around any part of the screen, mark it up, then copy, save or share it. Light enough to leave running all the time.</p>
-    <p class="cta"><span class="btn off" aria-disabled="true">Download · coming soon</span>
-      <a class="btn ghost" href="https://discord.gg/JPVewEfUQs">Get news on Discord</a></p>
-    <p class="note">Free and open source. Windows and Linux. No ads, no account.</p>
-  </div>
-</section>
-
-<section class="lasso whatsnew" id="changes">
-  <div class="wrap">
-    <h2>What's new</h2>
-    <p class="sub">Every version, newest first. News about Lasso goes out on Discord.</p>
-    <div class="changes" data-changes="lasso"><p class="cnone">No versions yet. Lasso is still being made.</p></div>
-  </div>
-</section>
-
-<section class="lasso">
-  <div class="wrap">
-    <div class="feats">
-      <div><h3>Draw around it</h3><p>Grab exactly the part of the screen you want, any shape.</p></div>
-      <div><h3>Mark it up</h3><p>Arrows, boxes and text before you send it.</p></div>
-      <div><h3>Copy, save or share</h3><p>Straight to the clipboard or a file, or share it in a click.</p></div>
+<header class="nav">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">Skip to content</a>
+    <a class="nav__logo" href="/"><span class="sn-logo" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#f2f3f5"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#111317" stroke-width="6" stroke-linecap="round"/></svg></span>Sonela</a>
+    <nav class="nav__links" aria-label="Main">
+      <div class="nav__item">
+        <a class="nav__link" href="/#apps">Apps <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <div class="nav__menu">
+          <div class="wrap grid">
+            <div class="menu-col span-3">
+              <p class="t-label">Out now</p>
+              <a href="https://echoclip.link/">Echo<span>Game clip recorder, 2.0</span></a>
+              <a href="/aimdot">Aimdot<span>Crosshair overlay, 1.0</span></a>
+            </div>
+            <div class="menu-col span-3">
+              <p class="t-label">Coming next</p>
+              <a href="/lasso">Lasso<span>Screenshot tool</span></a>
+              <a href="https://discord.gg/JPVewEfUQs">Discord<span>News and help</span></a>
+            </div>
+            <a class="menu-card span-3 start-10" href="/aimdot">
+              <div class="panel"><img class="frame__img" src="/img/aimdot-designer-640.webp" alt="Aimdot's Designer: presets, colour and a live preview of the crosshair" width="640" height="400" loading="lazy"></div>
+              <span class="t-card">Aimdot is out</span>
+              <span class="t-small muted">Your own crosshair on any game</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="nav__item"><a class="nav__link" href="https://echoclip.link/">Echo</a></div>
+      <div class="nav__item"><a class="nav__link" href="/aimdot">Aimdot</a></div>
+      <div class="nav__item"><a class="nav__link" href="/about">About</a></div>
+    </nav>
+    <div class="nav__actions">
+      <a class="nav__link" href="https://github.com/Resister0/sonela">GitHub</a>
+      <a class="btn btn--primary" href="/#apps">Get the apps</a>
     </div>
-    <p class="back"><a href="/#apps">← All Sonela apps</a></p>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
   </div>
-</section>
+</header>
+
+<main id="top" class="sn-sub sn-sub--lasso">
+  <section class="hero sn-solo" data-enter aria-labelledby="hero-h">
+    <div class="wrap">
+      <img class="sn-solo__icon" src="/lasso.svg" alt="" width="128" height="128">
+      <p class="sn-kicker sn-kicker--plain">Sonela Lasso · screenshot tool · coming soon</p>
+      <h1 id="hero-h">A free screenshot tool for Windows and Linux</h1>
+      <p class="hero__lead">Draw around any part of the screen, mark it up, then copy, save or share it. Light enough to leave running all the time.</p>
+      <div class="btn-row"><span class="btn btn--secondary sn-off" aria-disabled="true">Download · coming soon</span><a class="btn btn--primary" href="https://discord.gg/JPVewEfUQs">Get news on Discord</a></div>
+      <ul class="sn-solo__feats">
+        <li><b>Draw around it</b>Grab exactly the part of the screen you want, any shape.</li>
+        <li><b>Mark it up</b>Arrows, boxes and text before you send it.</li>
+        <li><b>Copy, save or share</b>Straight to the clipboard or a file, or share it in a click.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section sn-changes lasso" id="changes" aria-labelledby="changes-h">
+    <div class="wrap">
+      <div class="sn-changes__head">
+        <h2 id="changes-h">What's new in Lasso</h2>
+        <p class="sub">Every version, newest first. News about Lasso goes out on Discord.</p>
+      </div>
+      <div class="changes" data-changes="lasso"><p class="cnone">No versions yet. Lasso is still being made.</p></div>
+      <p class="sn-back"><a href="/#apps">All Sonela apps</a></p>
+    </div>
+  </section>
 </main>
-<footer><div class="wrap">
-  <span class="wordmark">sonela<i>.</i><i>.</i><i>.</i></span>
-  <span>© 2026 Sonela · Made by Resister0</span>
-  <nav>
-    <a href="/about">About</a>
-    <a href="/privacy">Privacy</a>
-    <a href="https://echoclip.link/">Echo</a>
-    <a href="https://github.com/Resister0/sonela">GitHub</a>
-    <a href="https://discord.gg/JPVewEfUQs">Discord</a>
-  </nav>
-</div></footer>
+
+<footer class="footer closing footer--dark sn-subfoot" id="contact">
+  <div class="wrap">
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="/"><span class="sn-logo" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#111317"/><path d="M42 21c-3-4-17-5-18 2s18 7 17 15-15 6-18 2" fill="none" stroke="#f2f3f5" stroke-width="6" stroke-linecap="round"/></svg></span>Sonela</a>
+          <p class="footer__lede">Free, light apps for PC gamers. Made by Resister0.</p>
+        </div>
+        <div class="span-2 footer__col"><h3>Apps</h3><ul><li><a href="https://echoclip.link/">Echo</a></li><li><a href="/aimdot">Aimdot</a></li><li><a href="/lasso">Lasso</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Sonela</h3><ul><li><a href="/about">About</a></li><li><a href="/privacy">Privacy</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Community</h3><ul><li><a href="https://discord.gg/JPVewEfUQs">Discord</a></li><li><a href="mailto:support@echoclip.link">Email support</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Source</h3><ul><li><a href="https://github.com/Resister0/sonela">This site</a></li><li><a href="https://github.com/Resister0/echoclip">Echo</a></li></ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 Sonela · Made by Resister0</span>
+        <span>Product names and logos are trademarks of their owners.</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="/assets/system.js"></script>
+<script type="module" src="/assets/motion/motion.js"></script>
+<script type="module" src="/assets/layout/layout.js"></script>
 </body>
 </html>
