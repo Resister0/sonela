@@ -175,13 +175,29 @@ AIMDOT_DOWNLOADS = [("windows", "Windows", "installer"), ("windows-portable", "W
 def dl_buttons(items):
     btns = "\n".join(f'      <span class="btn off dl" data-dl="{k}" aria-disabled="true"><span>{os} ({what})</span>'
                      f'<small data-dl-soon="{k}">Coming soon</small></span>' for k, os, what in items)
+    # data-dl-version: the Worker writes "Aimdot x.y.z · date · Windows and Linux · What's new" into it once released
     return (f'<div class="dl-grid" id="download">\n{btns}\n    </div>\n'
+            '    <p class="note dl-ver" data-dl-version></p>\n'
             f'    <p class="cta"><a class="btn ghost" href="{DISCORD}">Get news on Discord</a></p>\n'
-            '    <p class="note"><span data-dl-version></span>Free and open source. No ads, no account.</p>')
+            '    <p class="note">Free and open source. No ads, no account.</p>')
 
 
-def app_page(key, name, icon, title, desc, kind, lead, points, downloads=None):
-    """An app page: big icon, one line, the downloads (greyed out until there's a release), the features."""
+def whatsnew(key, sub, none):
+    """The "What's new" list right under the downloads. src/worker.js writes the versions into [data-changes] (read from
+    the app's public repo on GitHub, no scripts in the page); `none` = the line shown while there's no version yet."""
+    return f'''<section class="{key} whatsnew" id="changes">
+  <div class="wrap">
+    <h2>What's new</h2>
+    <p class="sub">{sub}</p>
+    <div class="changes" data-changes="{key}"><p class="cnone">{none}</p></div>
+  </div>
+</section>
+
+'''
+
+
+def app_page(key, name, icon, title, desc, kind, lead, points, downloads=None, news=("", "")):
+    """An app page: big icon, one line, the downloads (greyed out until there's a release), what's new, the features."""
     feats = "\n".join(f'      <div><h3>{h}</h3><p>{t}</p></div>' for h, t in points)
     if downloads:
         dl = dl_buttons(downloads)
@@ -199,7 +215,7 @@ def app_page(key, name, icon, title, desc, kind, lead, points, downloads=None):
   </div>
 </section>
 
-<section class="{key}">
+{whatsnew(key, *news)}<section class="{key}">
   <div class="wrap">
     <div class="feats">
 {feats}
@@ -223,7 +239,9 @@ aimdot = app_page("aimdot", "Aimdot", AIM,
   ("Out of the way", "Lives in the tray and can start with your PC."),
   ("Game Bar mode", "On Windows, it also shows over games in exclusive fullscreen."),
   ("Very light", "A small native app. You won't notice it while you play.")],
- AIMDOT_DOWNLOADS)
+ AIMDOT_DOWNLOADS,
+ ("Every version, newest first. Aimdot updates itself, and news about new versions goes out on Discord.",
+  "No versions yet. The first one is on its way."))
 
 lasso = app_page("lasso", "Lasso", LASSO,
  "Sonela Lasso - a free screenshot tool for Windows and Linux",
@@ -232,7 +250,9 @@ lasso = app_page("lasso", "Lasso", LASSO,
  "Draw around any part of the screen, mark it up, then copy, save or share it. Light enough to leave running all the time.",
  [("Draw around it", "Grab exactly the part of the screen you want, any shape."),
   ("Mark it up", "Arrows, boxes and text before you send it."),
-  ("Copy, save or share", "Straight to the clipboard or a file, or share it in a click.")])
+  ("Copy, save or share", "Straight to the clipboard or a file, or share it in a click.")],
+ news=("Every version, newest first. News about Lasso goes out on Discord.",
+       "No versions yet. Lasso is still being made."))
 
 for n, t in [("index.html", index), ("about.html", about), ("aimdot.html", aimdot), ("lasso.html", lasso),
              ("privacy.html", privacy), ("404.html", nf)]:
