@@ -191,7 +191,7 @@ async function changesOf(env, app) {
   return out;
 }
 
-// The list as HTML, written into the page's <div data-changes> (the site runs no scripts). Same look and rules as
+// The list as HTML, written into the page's <div data-changes> on the server (the list needs no page script). Same look and rules as
 // echoclip.link/changelog: the newest version as a big card, the older ones grouped by day. Each text is split into
 // its parts (commas, sentence ends - not inside quotes or brackets) and every part gets a tag (New / Fix / Linux /
 // Windows). The filter buttons are radio buttons + CSS (sonela.css, ".cfilter"); "Show older versions" is a <details>.

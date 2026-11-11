@@ -1,7 +1,9 @@
 # Security headers for the hub (Cloudflare Workers static assets / Pages read this file).
-# The hub has no scripts at all (JSON-LD is a data block, not a script), so script-src is 'none'.
+# Scripts: only the site's own files (script-src 'self'): the layout kit in /assets and /sonela-head.js. No inline
+# scripts, no third parties, nothing that tracks; JSON-LD is a data block, not a script. Every page reads fine with
+# scripts off (the menu button is hidden then, the links stay). connect-src stays 'none': the scripts fetch nothing.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'none'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
