@@ -1,0 +1,38 @@
+# On every push: rebuild the pages from build_pages.py + seo.py and fail if public/ changes.
+# public/*.html is sometimes edited by hand to match build_pages.py (no Python on one of the PCs); this run proves the two
+# still agree, so nobody has to remember to check. A failed run = GitHub e-mails whoever pushed; the run's log shows the
+# diff. Fix: run the two scripts on a PC with Python and commit what they write.
+# make_images.py is left out (it needs Inkscape); it only draws the icons and the share picture.
+name: Check pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # seo.py dates sitemap.xml from each page's last commit
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Rebuild the pages
+        run: |
+          python3 build_pages.py
+          python3 seo.py
+      - name: public/ must be unchanged
+        run: |
+          if ! git diff --quiet -- public/; then
+            echo "::error::public/ differs from what build_pages.py + seo.py write - run them and commit the result"
+            git diff --stat -- public/
+            git diff -- public/ | head -200
+            exit 1
+          fi
+          echo "public/ matches build_pages.py + seo.py"
