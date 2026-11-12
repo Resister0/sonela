@@ -246,7 +246,7 @@ main.sn-sub > section.sn-about { height: auto; min-height: 0; padding: calc(var(
 main.sn-sub > section.sn-about .hero__grid { align-items: center; }
 main.sn-sub > section.sn-solo + section { padding-top: var(--s-6); }
 
-/* Aimdot page: the memory comparison (12 Nov 2026), two bars to scale: about 1 MB vs about 320 MB, so Aimdot's bar is a
+/* Aimdot page: the memory comparison (12 Nov 2026), two bars to scale: under 2 MB vs about 320 MB, so Aimdot's bar is a
    sliver (1/320 of the track, shown at least 6px wide so it can be seen) */
 main.sn-sub > section.sn-mem { padding-top: 0; }
 .sn-mem__fig { margin: 0; max-width: 860px; background: var(--p-surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-6); display: grid; gap: var(--s-5); }
