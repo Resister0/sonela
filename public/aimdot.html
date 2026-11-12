@@ -132,6 +132,22 @@
           <figure class="sn-shot sn-shot--aimdot sn-shot--back"><img src="/img/aimdot-presets.webp" srcset="/img/aimdot-presets-640.webp 640w, /img/aimdot-presets.webp 1280w" sizes="(max-width: 1023px) 92vw, 46vw" width="1280" height="800" alt="Aimdot's preset list: 106 crosshairs in classic crosses, dots, circles and rings" loading="lazy"></figure>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- the memory comparison (12 Nov 2026): Task Manager's Memory column, both apps idle in the tray. Numbers only, no logos;
+       the bar widths are classes in sonela.css (no inline styles, CSP) -->
+  <section class="section sn-mem" id="memory" aria-labelledby="mem-h">
+    <div class="wrap">
+      <div class="sn-changes__head">
+        <h2 id="mem-h">Light on your PC</h2>
+        <p class="sub">Memory used while waiting in the tray, as Task Manager shows it.</p>
+      </div>
+      <figure class="sn-mem__fig">
+        <div class="sn-bar sn-bar--aimdot"><span class="sn-bar__name">Aimdot</span><span class="sn-bar__track" aria-hidden="true"><span class="sn-bar__fill"></span></span><span class="sn-bar__val">about 1 MB<small>1 process</small></span></div>
+        <div class="sn-bar sn-bar--other"><span class="sn-bar__name">Crosshair X</span><span class="sn-bar__track" aria-hidden="true"><span class="sn-bar__fill"></span></span><span class="sn-bar__val">about 320 MB<small>7 processes</small></span></div>
+        <figcaption>Measured on Windows 11 on 12 November 2026: both apps idle in the tray with no window open, Task Manager's Memory column, all of each app's processes added up.</figcaption>
+      </figure>
       <p class="sn-back"><a href="/#apps">All Sonela apps</a></p>
     </div>
   </section>

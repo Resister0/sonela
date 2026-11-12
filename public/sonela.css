@@ -246,6 +246,28 @@ main.sn-sub > section.sn-about { height: auto; min-height: 0; padding: calc(var(
 main.sn-sub > section.sn-about .hero__grid { align-items: center; }
 main.sn-sub > section.sn-solo + section { padding-top: var(--s-6); }
 
+/* Aimdot page: the memory comparison (12 Nov 2026), two bars to scale: about 1 MB vs about 320 MB, so Aimdot's bar is a
+   sliver (1/320 of the track, shown at least 6px wide so it can be seen) */
+main.sn-sub > section.sn-mem { padding-top: 0; }
+.sn-mem__fig { margin: 0; max-width: 860px; background: var(--p-surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-6); display: grid; gap: var(--s-5); }
+.sn-bar { display: grid; grid-template-columns: 120px minmax(0, 1fr) 132px; align-items: center; gap: var(--s-4); }
+.sn-bar__name { font-weight: 500; color: var(--p-ink); }
+.sn-bar__track { height: 14px; border-radius: 999px; background: color-mix(in oklab, var(--p-ink) 8%, transparent); overflow: hidden; display: block; }
+.sn-bar__fill { display: block; height: 100%; border-radius: 999px; }
+.sn-bar--aimdot .sn-bar__fill { width: 0.31%; min-width: 6px; background: var(--aimdot); }
+.sn-bar--other .sn-bar__fill { width: 100%; background: #6b6b6b; }
+.sn-bar__val { font-family: var(--font-display); font-size: 20px; font-weight: 500; letter-spacing: -0.01em; text-align: right; line-height: 1.2; }
+.sn-bar__val small { display: block; font-family: var(--font-text); font-size: 12.5px; font-weight: 400; color: #a3a3a3; letter-spacing: 0; }
+.sn-bar--aimdot .sn-bar__val { color: var(--aimdot); }
+.sn-mem__fig figcaption { font-size: var(--t-small); color: #a3a3a3; line-height: 1.5; border-top: 1px solid var(--line); padding-top: var(--s-4); }
+html[data-look="light"] .sn-bar__val small, html[data-look="light"] .sn-mem__fig figcaption { color: #5d636b; }
+@media (max-width: 639px) {
+  .sn-mem__fig { padding: var(--s-5); }
+  .sn-bar { grid-template-columns: minmax(0, 1fr) auto; gap: var(--s-2) var(--s-3); }
+  .sn-bar__track { grid-column: 1 / -1; grid-row: 2; }
+  .sn-bar__val { font-size: 18px; }
+}
+
 /* with scripts blocked (the CSP is script-src 'none' until the owner decides): the phone menu button cannot open, so it
    is hidden; every link is in the footer. sonela-head.js adds .mo-js when scripts run. */
 html:not(.mo-js) .nav__toggle { display: none; }
