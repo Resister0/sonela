@@ -112,7 +112,7 @@ HOME_FOOT = r'''<footer class="footer closing footer--statement" id="contact" ar
       </div>
       <div class="footer__legal">
         <span>&copy; 2026 Sonela · Made by Resister0</span>
-        <span>Product names and logos are trademarks of their owners.</span>
+        <span>Crosshair X, Discord, Windows and other product names belong to their owners. Sonela isn't connected to them.</span>
       </div>
     </div>
   </div>
@@ -134,7 +134,7 @@ SUB_FOOT = r'''<footer class="footer closing footer--dark sn-subfoot" id="contac
       </div>
       <div class="footer__legal">
         <span>&copy; 2026 Sonela · Made by Resister0</span>
-        <span>Product names and logos are trademarks of their owners.</span>
+        <span>Crosshair X, Discord, Windows and other product names belong to their owners. Sonela isn't connected to them.</span>
       </div>
     </div>
   </div>
