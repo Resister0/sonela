@@ -27,12 +27,23 @@ jobs:
         run: |
           python3 build_pages.py
           python3 seo.py
+      # The sitemap's <lastmod> dates are left out of the check (13 Nov 2026): they come from each page's last commit, so
+      # a commit that changes a page can never carry its own new date - the run failed for that alone twice (06346e0,
+      # e5d7a1c). Old dates only show as a warning; the next seo.py run on a PC with Python writes the new ones.
       - name: public/ must be unchanged
         run: |
-          if ! git diff --quiet -- public/; then
+          nodates() { sed -E 's#<lastmod>[^<]*</lastmod>##'; }
+          ok=1
+          if ! git diff --quiet -- public/ ':!public/sitemap.xml'; then ok=0; fi
+          if ! diff <(git show HEAD:public/sitemap.xml | nodates) <(nodates < public/sitemap.xml) > /dev/null; then ok=0; fi
+          if [ "$ok" = 0 ]; then
             echo "::error::public/ differs from what build_pages.py + seo.py write - run them and commit the result"
             git diff --stat -- public/
             git diff -- public/ | head -200
             exit 1
+          fi
+          if ! git diff --quiet -- public/sitemap.xml; then
+            echo "::warning::sitemap.xml dates are behind the pages' last commits (fine - the next seo.py run updates them)"
+            git diff -- public/sitemap.xml
           fi
           echo "public/ matches build_pages.py + seo.py"
