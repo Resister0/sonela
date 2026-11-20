@@ -8,7 +8,8 @@
 //                                                                     else JSON {version, notes, pub_date, url, signature}
 //   /<aimdot|lasso>/ping?v=<version>&os=<windows|linux>&new=<0|1>       -> 204; the app sends it at most once a day: +1 user
 //                                                                     that day (and +1 install when new=1)
-//   /stats                                                        -> the counts (password: secret STATS_KEY)
+//   /admin                                                        -> every app's numbers (src/admin.js; sign-in = Echo's admin email code);
+//                                                                     /stats (the old address) redirects there
 //   /aimdot                                                       -> the static page; its download buttons switch from
 //                                                                     "Coming soon" to real links once the release has the file
 //   /aimdot, /lasso                                               -> the static page with the "What's new" list written in
@@ -19,6 +20,8 @@
 // "Built from: <publish text>". A publish text starting with "#" = internal build: downloadable, never offered as an update.
 // The update answer follows the Aimdot updater's server contract (the Tauri / Echo updater format).
 // Nothing about the asker is stored (no IP, no ID) - the installer's privacy notice promises that.
+
+import { admin } from "./admin.js";
 
 const REPO = "Resister0/aimdot";
 // download button -> file name in the release (the first one that exists wins)
@@ -31,9 +34,10 @@ const FILES = {
 // the apps without a website of their own: their public repo. A repo that doesn't exist yet (Lasso) = "No versions yet";
 // its list shows up by itself once the repo has its first publish.
 const APPS = {
-  aimdot: { name: "Aimdot", repo: REPO, files: FILES },
+  // color = the app's dot on sonela.app/admin (each app here shows up there by itself)
+  aimdot: { name: "Aimdot", color: "#ef6a4c", repo: REPO, files: FILES },
   // Lasso's release files (its ci/public-build.yml)
-  lasso: { name: "Lasso", repo: "Resister0/lasso", files: {
+  lasso: { name: "Lasso", color: "#14a38b", repo: "Resister0/lasso", files: {
     "windows": ["Lasso-Setup.exe"],
     "windows-portable": ["Lasso-Windows.zip"],
     "linux": ["Lasso-x86_64.AppImage"],
@@ -283,56 +287,6 @@ function ping(req, env, ctx, app, url) {
   return ok;
 }
 
-// /stats: Basic auth, any name, password = secret STATS_KEY (`npx wrangler secret put STATS_KEY`); no key = 404
-async function stats(req, env) {
-  if (!env.STATS_KEY) return env.ASSETS.fetch(new Request(new URL("/404", req.url)));
-  const auth = req.headers.get("authorization") || "";
-  let pass = "";
-  try { pass = atob(auth.replace(/^Basic\s+/i, "")).split(":").slice(1).join(":"); } catch {}
-  if (pass !== env.STATS_KEY) return new Response("Sonela stats", { status: 401, headers: { "www-authenticate": 'Basic realm="Sonela stats"', "cache-control": "no-store" } });
-  const head = { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex, nofollow" };
-  if (!env.STATS) return new Response("<p>No database yet (wrangler.toml: STATS).</p>", { headers: head });
-  const since = new Date(Date.now() - 30 * 86400e3).toISOString().slice(0, 10);
-  const [days, totals, versions] = await Promise.all([
-    env.STATS.prepare("SELECT day, app, kind, os, SUM(n) AS n FROM daily WHERE day >= ?1 GROUP BY day, app, kind, os").bind(since).all(),
-    env.STATS.prepare("SELECT app, kind, SUM(n) AS n FROM daily GROUP BY app, kind").all(),
-    env.STATS.prepare("SELECT app, version, SUM(n) AS n FROM daily WHERE kind = 'user' AND day >= ?1 GROUP BY app, version ORDER BY n DESC").bind(new Date(Date.now() - 7 * 86400e3).toISOString().slice(0, 10)).all(),
-  ]);
-  const KINDS = [["download", "Downloads"], ["install", "Installs"], ["user", "Users"]];
-  let html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
-<title>Sonela stats</title><style>body{font:14px system-ui,sans-serif;background:#111316;color:#e8eaed;margin:0;padding:20px}h1{font-size:20px}h2{font-size:16px;margin:28px 0 8px}
-table{border-collapse:collapse;min-width:420px}td,th{padding:5px 10px;text-align:right;border-bottom:1px solid #2a2d33}th:first-child,td:first-child{text-align:left}th{color:#9aa0a6;font-weight:500}
-.small{color:#9aa0a6;font-size:12px}.bar{display:inline-block;height:8px;background:#14a38b;border-radius:2px;vertical-align:middle;margin-left:6px}</style></head><body>
-<h1>Sonela stats</h1><p class="small">Counts per day (UTC). Downloads = clicks on sonela.app download links; installs = first starts; users = app copies used that day (one ping a day each). W / L = Windows / Linux.</p>`;
-  for (const app of Object.keys(APPS)) {
-    const rows = days.results.filter((r) => r.app === app);
-    const tot = Object.fromEntries(totals.results.filter((r) => r.app === app).map((r) => [r.kind, r.n]));
-    html += `<h2>${esc(APPS[app].name)}</h2><p class="small">All time: ${KINDS.map(([k, t]) => `${t.toLowerCase()} ${tot[k] || 0}`).join(" · ")}</p>`;
-    const byDay = new Map();
-    for (const r of rows) {
-      const d = byDay.get(r.day) || {};
-      const k = d[r.kind] || { all: 0, windows: 0, linux: 0 };
-      k.all += r.n;
-      if (r.os.startsWith("windows")) k.windows += r.n; else if (r.os.startsWith("linux")) k.linux += r.n;
-      d[r.kind] = k;
-      byDay.set(r.day, d);
-    }
-    const peak = Math.max(1, ...[...byDay.values()].map((d) => (d.user || {}).all || 0));
-    html += `<table><tr><th>Day</th>${KINDS.map(([, t]) => `<th>${t}</th>`).join("")}</tr>`;
-    for (let i = 0; i < 30; i++) {
-      const day = new Date(Date.now() - i * 86400e3).toISOString().slice(0, 10);
-      const d = byDay.get(day) || {};
-      const cell = (k) => { const x = d[k]; return x ? `${x.all} <span class="small">${x.windows} / ${x.linux}</span>` : `<span class="small">0</span>`; };
-      const users = (d.user || {}).all || 0;
-      html += `<tr><td>${day}</td><td>${cell("download")}</td><td>${cell("install")}</td><td>${cell("user")}<span class="bar" style="width:${Math.round(users / peak * 80)}px"></span></td></tr>`;
-    }
-    html += `</table>`;
-    const vs = versions.results.filter((r) => r.app === app);
-    if (vs.length) html += `<p class="small">Versions in use, last 7 days: ${vs.map((r) => `${esc(r.version)} (${r.n})`).join(" · ")}</p>`;
-  }
-  return new Response(html + "</body></html>", { headers: head });
-}
-
 // ----- routes -----
 async function download(req, env, ctx, what, app = "aimdot") {
   const rel = await latestRelease(env, app);
@@ -424,7 +378,9 @@ export default {
     if (m) return update(env, m[2], m[3], m[4], m[1]);
     m = p.match(/^\/(aimdot|lasso)\/ping\/?$/);
     if (m) return ping(req, env, ctx, m[1], url);
-    if (p === "/stats" || p === "/stats/") return stats(req, env);
+    if (p === "/admin" || p.startsWith("/admin/"))
+      return admin(req, env, APPS, () => env.ASSETS.fetch(new Request(new URL("/404", req.url))));
+    if (p === "/stats" || p === "/stats/") return new Response(null, { status: 301, headers: { location: "/admin", "cache-control": "no-store" } });
     m = p.match(/^\/([a-z]+)\/changes\/?$/);
     if (m && APPS[m[1]]) {
       const out = await changesOf(env, m[1]).catch((e) => { console.log("changes error", e && e.message); return null; });

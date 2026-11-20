@@ -18,15 +18,23 @@ routes = [
 directory = "./public"
 binding = "ASSETS"
 # only these paths run the script first; every other page is served straight from public/
-run_worker_first = ["/aimdot", "/aimdot/download/*", "/aimdot/update/*", "/aimdot/changes", "/aimdot/ping", "/lasso", "/lasso/download/*", "/lasso/update/*", "/lasso/changes", "/lasso/ping", "/stats"]
+run_worker_first = ["/aimdot", "/aimdot/download/*", "/aimdot/update/*", "/aimdot/changes", "/aimdot/ping", "/lasso", "/lasso/download/*", "/lasso/update/*", "/lasso/changes", "/lasso/ping", "/stats", "/admin", "/admin/*"]
 html_handling = "auto-trailing-slash"   # about.html is served at /about
 not_found_handling = "404-page"         # unknown paths get public/404.html with status 404
 
-# Daily counts (downloads / installs / users per app per day, numbers only) - shown at sonela.app/stats.
+# Daily counts (downloads / installs / users per app per day, numbers only) - shown at sonela.app/admin (src/admin.js).
 # Set up once: npx wrangler d1 create sonela-stats   -> paste its database_id below and remove the #s,
-# then: npx wrangler d1 execute sonela-stats --remote --file=schema.sql   and   npx wrangler secret put STATS_KEY
-# (the /stats password). Until then the script counts nothing and /stats is a 404.
-# [[d1_databases]]
-# binding = "STATS"
-# database_name = "sonela-stats"
-# database_id = "PASTE-THE-ID-HERE"
+# then: npx wrangler d1 execute sonela-stats --remote --file=schema.sql   (until then the script counts nothing).
+# /admin signs in with Echo's admin email code through the ECHO binding below - no password of its own.
+[[d1_databases]]
+binding = "STATS"
+database_name = "sonela-stats"
+database_id = "1fdcfaba-5f4c-415b-b254-93cadef3115e"
+
+# sonela.app/admin's sign-in (echoclip.link/admin's email code) and Echo's numbers: a service binding to the echo-cloud
+# Worker's "HubStats" entrypoint (Echo's cloud/src/index.js + hub_stats.js). It has no web address - only Workers in the
+# same Cloudflare account can call it - so no secret is needed. Deploy echo-cloud (with HubStats) BEFORE this site.
+[[services]]
+binding = "ECHO"
+service = "echo-cloud"
+entrypoint = "HubStats"
