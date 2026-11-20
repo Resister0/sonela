@@ -1,11 +1,14 @@
-// sonela.app: the pages are static files (public/). This small script only handles Aimdot's downloads, its update
-// check, the download buttons on /aimdot and the "What's new" lists on the app pages. No database, no cookies, nothing
-// about visitors is stored.
+// sonela.app: the pages are static files (public/). This small script only handles the apps' downloads, their update
+// checks, the download buttons on /aimdot, the "What's new" lists on the app pages and the daily counts. No cookies,
+// nothing about one visitor or one person is stored: only numbers per day (see "counts" below).
 //
-//   /aimdot/download/<windows|windows-portable|linux|linux-tar>  -> 302 to the file in the GitHub release "latest"
-//   /aimdot/update/<windows|linux>/<arch>/<current version>       -> 204 = nothing to install (x-aimdot-why: current,
+//   /<aimdot|lasso>/download/<windows|windows-portable|linux|linux-tar>  -> 302 to the file in the app's release "latest"
+//   /<aimdot|lasso>/update/<windows|linux>/<arch>/<current version>       -> 204 = nothing to install (x-<app>-why: current,
 //                                                                     no-release, internal, unsigned, unknown-os, paused),
 //                                                                     else JSON {version, notes, pub_date, url, signature}
+//   /<aimdot|lasso>/ping?v=<version>&os=<windows|linux>&new=<0|1>       -> 204; the app sends it at most once a day: +1 user
+//                                                                     that day (and +1 install when new=1)
+//   /stats                                                        -> the counts (password: secret STATS_KEY)
 //   /aimdot                                                       -> the static page; its download buttons switch from
 //                                                                     "Coming soon" to real links once the release has the file
 //   /aimdot, /lasso                                               -> the static page with the "What's new" list written in
@@ -29,7 +32,13 @@ const FILES = {
 // its list shows up by itself once the repo has its first publish.
 const APPS = {
   aimdot: { name: "Aimdot", repo: REPO, files: FILES },
-  lasso: { name: "Lasso", repo: "Resister0/lasso", files: {} },
+  // Lasso's release files (its ci/public-build.yml)
+  lasso: { name: "Lasso", repo: "Resister0/lasso", files: {
+    "windows": ["Lasso-Setup.exe"],
+    "windows-portable": ["Lasso-Windows.zip"],
+    "linux": ["Lasso-x86_64.AppImage"],
+    "linux-tar": ["Lasso-linux-x86_64.tar.gz"],
+  } },
 };
 // update check: which download the app replaces itself with, per OS (needs its .sig next to it)
 const UPDATE_FILES = { windows: "windows", linux: "linux" };
@@ -98,7 +107,7 @@ async function releaseFromWeb({ repo, files: wanted }) {
 }
 
 const versionOf = (rel) => rel && (rel.name.match(/\d+\.\d+\.\d+/) || [])[0];
-const fileFor = (rel, what) => rel && (FILES[what] || []).find((n) => rel.files.includes(n));
+const fileFor = (rel, what, app = "aimdot") => rel && (APPS[app].files[what] || []).find((n) => rel.files.includes(n));
 const builtFrom = (rel) => ((rel && rel.body.match(/Built from: (.*)/)) || [])[1] || "";
 const verNum = (v) => String(v || "").replace(/^v/, "").split(/[.+-]/).slice(0, 3).map((x) => parseInt(x, 10) || 0);
 function newer(a, b) {
@@ -249,37 +258,115 @@ function changesHtml(app, list) {
   return html;
 }
 
-// ----- routes -----
-async function download(env, what) {
-  const file = fileFor(await latestRelease(env), what);
-  // not released yet (or being rebuilt): back to the page, whose button says "Coming soon"
-  return new Response(null, { status: 302, headers: { location: file ? fileUrl(file) : "/aimdot#download", "cache-control": "no-store" } });
+// ----- counts: per day, per app, per kind (download / install / user), system and version - numbers only -----
+// D1 database bound as STATS (wrangler.toml; schema.sql). Not set up yet = nothing is counted, everything else works.
+// Never stored: IP, ID, user agent, anything about one person. One app copy sends one ping a day at most (the app keeps
+// the day it last sent one), so "user" = daily users; "install" = a first start ever (new=1).
+const BOT = /bot|crawl|spider|slurp|preview|fetch|curl|wget|python|monitor/i;
+function count(env, ctx, app, kind, os, version) {
+  if (!env.STATS) return;
+  const day = new Date().toISOString().slice(0, 10);
+  const run = env.STATS.prepare("INSERT INTO daily (day, app, kind, os, version, n) VALUES (?1, ?2, ?3, ?4, ?5, 1) "
+    + "ON CONFLICT (day, app, kind, os, version) DO UPDATE SET n = n + 1").bind(day, app, kind, os, version).run()
+    .catch((e) => console.log("stats", e && e.message));
+  if (ctx) ctx.waitUntil(run);
 }
 
-async function update(env, os, arch, current) {
-  const none = (why) => new Response(null, { status: 204, headers: { "x-aimdot-why": why, "cache-control": "no-store" } });
+function ping(req, env, ctx, app, url) {
+  const ok = new Response(null, { status: 204, headers: { "cache-control": "no-store" } });
+  // only the app itself (User-Agent "Aimdot/1.2.3" / "Lasso/0.1.0"), never a browser or a crawler
+  if (!(req.headers.get("user-agent") || "").toLowerCase().startsWith(`${app}/`)) return ok;
+  const os = ["windows", "linux"].includes(url.searchParams.get("os")) ? url.searchParams.get("os") : "other";
+  const v = /^\d{1,4}\.\d{1,4}\.\d{1,6}$/.test(url.searchParams.get("v") || "") ? url.searchParams.get("v") : "?";
+  count(env, ctx, app, "user", os, v);
+  if (url.searchParams.get("new") === "1") count(env, ctx, app, "install", os, v);
+  return ok;
+}
+
+// /stats: Basic auth, any name, password = secret STATS_KEY (`npx wrangler secret put STATS_KEY`); no key = 404
+async function stats(req, env) {
+  if (!env.STATS_KEY) return env.ASSETS.fetch(new Request(new URL("/404", req.url)));
+  const auth = req.headers.get("authorization") || "";
+  let pass = "";
+  try { pass = atob(auth.replace(/^Basic\s+/i, "")).split(":").slice(1).join(":"); } catch {}
+  if (pass !== env.STATS_KEY) return new Response("Sonela stats", { status: 401, headers: { "www-authenticate": 'Basic realm="Sonela stats"', "cache-control": "no-store" } });
+  const head = { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex, nofollow" };
+  if (!env.STATS) return new Response("<p>No database yet (wrangler.toml: STATS).</p>", { headers: head });
+  const since = new Date(Date.now() - 30 * 86400e3).toISOString().slice(0, 10);
+  const [days, totals, versions] = await Promise.all([
+    env.STATS.prepare("SELECT day, app, kind, os, SUM(n) AS n FROM daily WHERE day >= ?1 GROUP BY day, app, kind, os").bind(since).all(),
+    env.STATS.prepare("SELECT app, kind, SUM(n) AS n FROM daily GROUP BY app, kind").all(),
+    env.STATS.prepare("SELECT app, version, SUM(n) AS n FROM daily WHERE kind = 'user' AND day >= ?1 GROUP BY app, version ORDER BY n DESC").bind(new Date(Date.now() - 7 * 86400e3).toISOString().slice(0, 10)).all(),
+  ]);
+  const KINDS = [["download", "Downloads"], ["install", "Installs"], ["user", "Users"]];
+  let html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
+<title>Sonela stats</title><style>body{font:14px system-ui,sans-serif;background:#111316;color:#e8eaed;margin:0;padding:20px}h1{font-size:20px}h2{font-size:16px;margin:28px 0 8px}
+table{border-collapse:collapse;min-width:420px}td,th{padding:5px 10px;text-align:right;border-bottom:1px solid #2a2d33}th:first-child,td:first-child{text-align:left}th{color:#9aa0a6;font-weight:500}
+.small{color:#9aa0a6;font-size:12px}.bar{display:inline-block;height:8px;background:#14a38b;border-radius:2px;vertical-align:middle;margin-left:6px}</style></head><body>
+<h1>Sonela stats</h1><p class="small">Counts per day (UTC). Downloads = clicks on sonela.app download links; installs = first starts; users = app copies used that day (one ping a day each). W / L = Windows / Linux.</p>`;
+  for (const app of Object.keys(APPS)) {
+    const rows = days.results.filter((r) => r.app === app);
+    const tot = Object.fromEntries(totals.results.filter((r) => r.app === app).map((r) => [r.kind, r.n]));
+    html += `<h2>${esc(APPS[app].name)}</h2><p class="small">All time: ${KINDS.map(([k, t]) => `${t.toLowerCase()} ${tot[k] || 0}`).join(" · ")}</p>`;
+    const byDay = new Map();
+    for (const r of rows) {
+      const d = byDay.get(r.day) || {};
+      const k = d[r.kind] || { all: 0, windows: 0, linux: 0 };
+      k.all += r.n;
+      if (r.os.startsWith("windows")) k.windows += r.n; else if (r.os.startsWith("linux")) k.linux += r.n;
+      d[r.kind] = k;
+      byDay.set(r.day, d);
+    }
+    const peak = Math.max(1, ...[...byDay.values()].map((d) => (d.user || {}).all || 0));
+    html += `<table><tr><th>Day</th>${KINDS.map(([, t]) => `<th>${t}</th>`).join("")}</tr>`;
+    for (let i = 0; i < 30; i++) {
+      const day = new Date(Date.now() - i * 86400e3).toISOString().slice(0, 10);
+      const d = byDay.get(day) || {};
+      const cell = (k) => { const x = d[k]; return x ? `${x.all} <span class="small">${x.windows} / ${x.linux}</span>` : `<span class="small">0</span>`; };
+      const users = (d.user || {}).all || 0;
+      html += `<tr><td>${day}</td><td>${cell("download")}</td><td>${cell("install")}</td><td>${cell("user")}<span class="bar" style="width:${Math.round(users / peak * 80)}px"></span></td></tr>`;
+    }
+    html += `</table>`;
+    const vs = versions.results.filter((r) => r.app === app);
+    if (vs.length) html += `<p class="small">Versions in use, last 7 days: ${vs.map((r) => `${esc(r.version)} (${r.n})`).join(" · ")}</p>`;
+  }
+  return new Response(html + "</body></html>", { headers: head });
+}
+
+// ----- routes -----
+async function download(req, env, ctx, what, app = "aimdot") {
+  const rel = await latestRelease(env, app);
+  const file = fileFor(rel, what, app);
+  if (file && req.method === "GET" && !BOT.test(req.headers.get("user-agent") || "")) count(env, ctx, app, "download", what, versionOf(rel) || "?");
+  // not released yet (or being rebuilt): back to the page, whose button says "Coming soon"
+  return new Response(null, { status: 302, headers: { location: file ? fileUrl(file, APPS[app].repo) : `/${app}#download`, "cache-control": "no-store" } });
+}
+
+async function update(env, os, arch, current, app = "aimdot") {
+  const none = (why) => new Response(null, { status: 204, headers: { [`x-${app}-why`]: why, "cache-control": "no-store" } });
   if (!UPDATE_FILES[os]) return none("unknown-os");
   if (!ARCHES.has(arch)) return none("no-release");
-  // the brake: `npx wrangler secret put AIMDOT_UPDATES_PAUSED` (value 1) pauses updates; `wrangler secret delete` resumes
-  if (env.AIMDOT_UPDATES_PAUSED === "1") return none("paused");
-  const rel = await latestRelease(env);
+  // the brake: `npx wrangler secret put AIMDOT_UPDATES_PAUSED` (or LASSO_UPDATES_PAUSED), value 1, pauses that app's
+  // updates; `wrangler secret delete` resumes
+  if (env[`${app.toUpperCase()}_UPDATES_PAUSED`] === "1") return none("paused");
+  const rel = await latestRelease(env, app);
   const version = versionOf(rel);
   if (!version) return none("no-release");
-  const file = fileFor(rel, UPDATE_FILES[os]);
+  const file = fileFor(rel, UPDATE_FILES[os], app);
   if (!file) return none("no-release");
   if (!rel.files.includes(`${file}.sig`)) return none("unsigned");
   if (!newer(version, current)) return none("current");
   const notes = builtFrom(rel).trim();
   if (notes.startsWith("#")) return none("internal");
-  const key = `${version}:${file}`;
+  const key = `${app}:${version}:${file}`;
   let signature = sigMemo.get(key);
   if (!signature) {
-    const r = await fetch(fileUrl(`${file}.sig`), { headers: UA }).catch(() => null);
+    const r = await fetch(fileUrl(`${file}.sig`, APPS[app].repo), { headers: UA }).catch(() => null);
     if (!r || !r.ok) return none("no-signature");
     signature = (await r.text()).trim();
     sigMemo.set(key, signature);
   }
-  return new Response(JSON.stringify({ version, notes, pub_date: rel.published, url: fileUrl(file), signature }), {
+  return new Response(JSON.stringify({ version, notes, pub_date: rel.published, url: fileUrl(file, APPS[app].repo), signature }), {
     headers: { "content-type": "application/json", "cache-control": "no-store" } });
 }
 
@@ -328,13 +415,16 @@ async function appPage(req, env, app) {
 }
 
 export default {
-  async fetch(req, env) {
+  async fetch(req, env, ctx) {
     const url = new URL(req.url);
     const p = url.pathname;
-    let m = p.match(/^\/aimdot\/download\/([a-z-]+)\/?$/);
-    if (m) return FILES[m[1]] ? download(env, m[1]) : env.ASSETS.fetch(req);   // unknown: the 404 page
-    m = p.match(/^\/aimdot\/update\/([a-z]+)\/([a-z0-9_]+)\/v?([0-9][0-9a-z.+-]{0,30})\/?$/);
-    if (m) return update(env, m[1], m[2], m[3]);
+    let m = p.match(/^\/(aimdot|lasso)\/download\/([a-z-]+)\/?$/);
+    if (m) return APPS[m[1]].files[m[2]] ? download(req, env, ctx, m[2], m[1]) : env.ASSETS.fetch(req);   // unknown: the 404 page
+    m = p.match(/^\/(aimdot|lasso)\/update\/([a-z]+)\/([a-z0-9_]+)\/v?([0-9][0-9a-z.+-]{0,30})\/?$/);
+    if (m) return update(env, m[2], m[3], m[4], m[1]);
+    m = p.match(/^\/(aimdot|lasso)\/ping\/?$/);
+    if (m) return ping(req, env, ctx, m[1], url);
+    if (p === "/stats" || p === "/stats/") return stats(req, env);
     m = p.match(/^\/([a-z]+)\/changes\/?$/);
     if (m && APPS[m[1]]) {
       const out = await changesOf(env, m[1]).catch((e) => { console.log("changes error", e && e.message); return null; });

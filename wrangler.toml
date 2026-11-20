@@ -1,5 +1,6 @@
-# Sonela hub site: static pages (public/) + a small script (src/worker.js) for Aimdot's downloads, update check and
-# download buttons, and the "What's new" lists on /aimdot and /lasso (read from GitHub, kept in Cloudflare's cache). No database, no secrets needed, free plan. Optional secret GITHUB_TOKEN (read-only, public repos)
+# Sonela hub site: static pages (public/) + a small script (src/worker.js) for the apps' downloads, update checks,
+# download buttons, the "What's new" lists on /aimdot and /lasso (read from GitHub, kept in Cloudflare's cache) and the
+# daily counts (optional D1 database below; without it nothing is counted). Free plan. Optional secret GITHUB_TOKEN (read-only, public repos)
 # only raises GitHub's rate limit; without it the script falls back to reading github.com.
 # Deploy (from this folder): npx wrangler deploy
 name = "sonela-hub"
@@ -17,6 +18,15 @@ routes = [
 directory = "./public"
 binding = "ASSETS"
 # only these paths run the script first; every other page is served straight from public/
-run_worker_first = ["/aimdot", "/aimdot/download/*", "/aimdot/update/*", "/aimdot/changes", "/lasso", "/lasso/changes"]
+run_worker_first = ["/aimdot", "/aimdot/download/*", "/aimdot/update/*", "/aimdot/changes", "/aimdot/ping", "/lasso", "/lasso/download/*", "/lasso/update/*", "/lasso/changes", "/lasso/ping", "/stats"]
 html_handling = "auto-trailing-slash"   # about.html is served at /about
 not_found_handling = "404-page"         # unknown paths get public/404.html with status 404
+
+# Daily counts (downloads / installs / users per app per day, numbers only) - shown at sonela.app/stats.
+# Set up once: npx wrangler d1 create sonela-stats   -> paste its database_id below and remove the #s,
+# then: npx wrangler d1 execute sonela-stats --remote --file=schema.sql   and   npx wrangler secret put STATS_KEY
+# (the /stats password). Until then the script counts nothing and /stats is a 404.
+# [[d1_databases]]
+# binding = "STATS"
+# database_name = "sonela-stats"
+# database_id = "PASTE-THE-ID-HERE"
