@@ -18,7 +18,7 @@ routes = [
 directory = "./public"
 binding = "ASSETS"
 # only these paths run the script first; every other page is served straight from public/
-run_worker_first = ["/aimdot", "/aimdot/download/*", "/aimdot/update/*", "/aimdot/changes", "/aimdot/ping", "/lasso", "/lasso/download/*", "/lasso/update/*", "/lasso/changes", "/lasso/ping", "/stats", "/admin", "/admin/*"]
+run_worker_first = ["/aimdot", "/aimdot/download/*", "/aimdot/update/*", "/aimdot/changes", "/aimdot/ping", "/lasso", "/lasso/download/*", "/lasso/update/*", "/lasso/changes", "/lasso/ping", "/stats", "/admin", "/admin/*", "/s/*"]
 html_handling = "auto-trailing-slash"   # about.html is served at /about
 not_found_handling = "404-page"         # unknown paths get public/404.html with status 404
 
@@ -33,7 +33,8 @@ database_id = "1fdcfaba-5f4c-415b-b254-93cadef3115e"
 
 # sonela.app/admin talks to the echo-cloud Worker through two service bindings (no secrets - only Workers in the same
 # Cloudflare account can bind): ECHO = its "HubStats" entrypoint (no web address: the admin page files + "is this a
-# valid admin session?"), ECHO_WEB = its normal fetch (the page's own calls, passed on unchanged). Deploy echo-cloud
+# valid admin session?"), ECHO_WEB = its normal fetch (the page's own calls, passed on unchanged; also Lasso's share
+# links sonela.app/s/<id>, whose page and picture live on echo-cloud). Deploy echo-cloud
 # BEFORE this site when both changed.
 [[services]]
 binding = "ECHO"

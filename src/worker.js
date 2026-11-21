@@ -15,6 +15,8 @@
 //   /aimdot, /lasso                                               -> the static page with the "What's new" list written in
 //   /<aimdot|lasso>/changes                                       -> the same list as JSON {app, latest, releases: [{version,
 //                                                                     notes, at}]}, newest first
+//   /s/<id>, /s/<id>.png ...                                      -> Lasso share links: passed unchanged to Echo's server
+//                                                                     (service binding ECHO_WEB -> Worker "echo-cloud")
 //
 // The release: https://github.com/Resister0/aimdot/releases/tag/latest, titled "Aimdot x.y.z", its text has a line
 // "Built from: <publish text>". A publish text starting with "#" = internal build: downloadable, never offered as an update.
@@ -372,6 +374,9 @@ export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
     const p = url.pathname;
+    // Lasso share links: the page, the picture and the view count live on echo-cloud; the request goes on as it is,
+    // so echo-cloud sees the sonela.app address (it sends Echo clip ids back to echoclip.link)
+    if (p.startsWith("/s/")) return env.ECHO_WEB ? env.ECHO_WEB.fetch(req) : env.ASSETS.fetch(req);
     let m = p.match(/^\/(aimdot|lasso)\/download\/([a-z-]+)\/?$/);
     if (m) return APPS[m[1]].files[m[2]] ? download(req, env, ctx, m[2], m[1]) : env.ASSETS.fetch(req);   // unknown: the 404 page
     m = p.match(/^\/(aimdot|lasso)\/update\/([a-z]+)\/([a-z0-9_]+)\/v?([0-9][0-9a-z.+-]{0,30})\/?$/);
