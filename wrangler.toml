@@ -18,7 +18,7 @@ routes = [
 directory = "./public"
 binding = "ASSETS"
 # only these paths run the script first; every other page is served straight from public/
-run_worker_first = ["/aimdot", "/aimdot/download/*", "/aimdot/update/*", "/aimdot/changes", "/aimdot/ping", "/lasso", "/lasso/download/*", "/lasso/update/*", "/lasso/changes", "/lasso/ping", "/stats", "/admin", "/admin/*", "/s/*"]
+run_worker_first = ["/aimdot", "/aimdot/download/*", "/aimdot/update/*", "/aimdot/changes", "/aimdot/ping", "/aimdot/channel/check", "/lasso", "/lasso/download/*", "/lasso/update/*", "/lasso/changes", "/lasso/ping", "/lasso/channel/check", "/stats", "/admin", "/admin/*", "/s/*"]
 html_handling = "auto-trailing-slash"   # about.html is served at /about
 not_found_handling = "404-page"         # unknown paths get public/404.html with status 404
 

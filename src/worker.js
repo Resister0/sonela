@@ -6,8 +6,11 @@
 //   /<aimdot|lasso>/update/<windows|linux>/<arch>/<current version>       -> 204 = nothing to install (x-<app>-why: current,
 //                                                                     no-release, internal, unsigned, unknown-os, paused),
 //                                                                     else JSON {version, notes, pub_date, url, signature}
-//   /<aimdot|lasso>/ping?v=<version>&os=<windows|linux>&new=<0|1>       -> 204; the app sends it at most once a day: +1 user
-//                                                                     that day (and +1 install when new=1)
+//                                                                     ?ch=beta|dev = update channel (see "channels" below)
+//   POST /<aimdot|lasso>/channel/check {code}                        -> {ok}: is this the dev channel's tester code?
+//   /<aimdot|lasso>/ping?v=<version>&os=<windows|linux>&new=<0|1>&ch=<stable|beta|dev>
+//                                                                  -> 204; the app sends it at most once a day: +1 user
+//                                                                     that day (and +1 install when new=1, +1 on its channel)
 //   /admin                                                        -> echoclip.link/admin's whole page with an app switcher (src/admin.js);
 //                                                                     /stats (the old address) redirects there
 //   /aimdot                                                       -> the static page; its download buttons switch from
@@ -21,6 +24,10 @@
 // The release: https://github.com/Resister0/aimdot/releases/tag/latest, titled "Aimdot x.y.z", its text has a line
 // "Built from: <publish text>". A publish text starting with "#" = internal build: downloadable, never offered as an update.
 // The update answer follows the Aimdot updater's server contract (the Tauri / Echo updater format).
+// Update channels (21 Nov 2026, Echo's method): beta / dev builds are their own GitHub pre-releases, tags "beta" / "dev"
+// (the public repo's beta / dev branches, built by the same ci/public-build.yml). stable = "latest" only, beta = the
+// newest of latest + beta, dev = the newest of latest + beta + dev (nobody gets stuck on an old beta). dev also needs
+// the header x-sonela-code = secret DEV_CODE; wrong / no code or no DEV_CODE set = stable.
 // Nothing about the asker is stored (no IP, no ID) - the installer's privacy notice promises that.
 
 import { admin } from "./admin.js";
@@ -49,7 +56,37 @@ const APPS = {
 // update check: which download the app replaces itself with, per OS (needs its .sig next to it)
 const UPDATE_FILES = { windows: "windows", linux: "linux" };
 const ARCHES = new Set(["x86_64", "x64", "amd64"]);   // aarch64 etc.: no builds yet -> 204 no-release
-const fileUrl = (name, repo = REPO) => `https://github.com/${repo}/releases/download/latest/${encodeURIComponent(name)}`;
+const fileUrl = (name, repo = REPO, tag = "latest") => `https://github.com/${repo}/releases/download/${tag}/${encodeURIComponent(name)}`;
+// ----- update channels -----
+const CHANNEL_TAGS = { stable: ["latest"], beta: ["latest", "beta"], dev: ["latest", "beta", "dev"] };
+function sameSecret(got, want) {
+  got = String(got || ""); want = String(want || "");
+  if (want.length < 6 || got.length !== want.length) return false;
+  let diff = 0;
+  for (let i = 0; i < want.length; i++) diff |= want.charCodeAt(i) ^ got.charCodeAt(i);
+  return diff === 0;
+}
+/// the channel this update check may use: "beta" for anyone who asks, "dev" only with the right code, else "stable"
+function channelOf(req, url, env) {
+  const ch = String(url.searchParams.get("ch") || "").toLowerCase();
+  if (ch === "beta") return "beta";
+  if (ch === "dev" && sameSecret(req.headers.get("x-sonela-code"), env.DEV_CODE)) return "dev";
+  return "stable";
+}
+// the dev code check: 10 tries an hour per network (per Worker copy - enough to stop guessing, no database needed)
+const codeTries = new Map();
+async function channelCheck(req, env) {
+  const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
+  if (req.method !== "POST") return json({ error: "POST only" }, 405);
+  const ip = req.headers.get("cf-connecting-ip") || "?", t = codeTries.get(ip);
+  const hour = Math.floor(nowS() / 3600);
+  const n = t && t.hour === hour ? t.n + 1 : 1;
+  codeTries.set(ip, { hour, n });
+  if (codeTries.size > 5000) codeTries.clear();
+  if (n > 10) return json({ error: "Too many tries - wait an hour" }, 429);
+  const b = await req.json().catch(() => ({}));
+  return json({ ok: sameSecret(String((b && b.code) || "").trim(), env.DEV_CODE) });
+}
 const UA = { "user-agent": "sonela-hub" };
 const unesc = (t) => t.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&");
 const ghApi = (env, path) => fetch(`https://api.github.com/repos/${path}`, { headers: { ...UA,
@@ -61,55 +98,60 @@ const memo = new Map();   // app -> {at, rel}
 const sigMemo = new Map();
 const nowS = () => Math.floor(Date.now() / 1000);
 
-async function latestRelease(env, app = "aimdot") {
-  const m = memo.get(app);
+// tag "latest" = stable; "beta" / "dev" = that channel's pre-release (rel.tag says which)
+async function latestRelease(env, app = "aimdot", tag = "latest") {
+  const mk = tag === "latest" ? app : `${app}:${tag}`;
+  const m = memo.get(mk);
   if (m && nowS() - m.at < (m.rel ? 300 : 30)) return m.rel;
-  const keep = new Request(`https://sonela.app/_cache/${app}-release`);
+  const keep = new Request(`https://sonela.app/_cache/${tag === "latest" ? app : `${app}-${tag}`}-release`);
   let rel = null, gone = false;
   try {
-    const r = await ghApi(env, `${APPS[app].repo}/releases/tags/latest`);
+    const r = await ghApi(env, `${APPS[app].repo}/releases/tags/${tag}`);
     if (r.ok) {
       const j = await r.json();
-      rel = { name: j.name || "", body: j.body || "", published: j.published_at || j.created_at || "", files: (j.assets || []).map((a) => a.name) };
+      rel = { name: j.name || "", body: j.body || "", published: j.published_at || j.created_at || "", files: (j.assets || []).map((a) => a.name), tag };
     } else if (r.status === 404) {
       gone = true;   // no release yet, or "latest" is being rebuilt right now (its files are gone too)
     } else {
       console.log("github api", r.status);
     }
   } catch (e) { console.log("github api error", e && e.message); }
-  if (!rel && !gone) rel = await releaseFromWeb(APPS[app]).catch(() => null);   // rate limit etc.: read github.com instead
+  if (!rel && !gone) rel = await releaseFromWeb(APPS[app], tag).catch(() => null);   // rate limit etc.: read github.com instead
   if (rel) {
     try { await caches.default.put(keep, new Response(JSON.stringify(rel), { headers: { "cache-control": "max-age=604800" } })); } catch {}
   } else if (!gone) {
     try { const hit = await caches.default.match(keep); if (hit) rel = await hit.json(); } catch {}
   }
-  memo.set(app, { at: nowS(), rel });
+  if (rel && !rel.tag) rel.tag = tag;   // a copy kept from before channels
+  memo.set(mk, { at: nowS(), rel });
   return rel;
 }
 
 // title + text from the releases feed, files checked with HEAD on their download links (a redirect = it's there)
-async function releaseFromWeb({ repo, files: wanted }) {
+async function releaseFromWeb({ repo, files: wanted }, want = "latest") {
   const names = [];
   for (const list of Object.values(wanted)) for (const n of list) names.push(n, `${n}.sig`);
   if (!names.length) return null;
   const feed = await fetch(`https://github.com/${repo}/releases.atom`, { headers: { ...UA, accept: "application/atom+xml" } });
   if (!feed.ok) return null;
   const xml = await feed.text();
-  const entry = (xml.match(/<entry>([\s\S]*?)<\/entry>/) || [])[1] || "";
+  const tagOf = (e) => (((e.match(/<link[^>]*href="([^"]+)"/) || [])[1] || "").match(/\/releases\/tag\/([^"/?#]+)/) || [])[1];
+  // stable: the feed's newest entry must be "latest" (as before); beta / dev: that tag's entry wherever it is
+  const entries = [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)].map((x) => x[1]);
+  const entry = (want === "latest" ? entries.slice(0, 1) : entries).find((e) => tagOf(e) === want) || "";
   const name = unesc(((entry.match(/<title[^>]*>([\s\S]*?)<\/title>/) || [])[1] || "").trim());
-  const tag = (((entry.match(/<link[^>]*href="([^"]+)"/) || [])[1] || "").match(/\/releases\/tag\/([^"/?#]+)/) || [])[1];
-  if (!/\d+\.\d+\.\d+/.test(name) || tag !== "latest") return null;
+  if (!/\d+\.\d+\.\d+/.test(name)) return null;
   const html = unesc((entry.match(/<content[^>]*>([\s\S]*?)<\/content>/) || [])[1] || "");
   const body = unesc(html.replace(/<br\s*\/?>/gi, "\n").replace(/<\/(p|li|div|h\d)>/gi, "\n").replace(/<[^>]+>/g, ""));
   const published = ((entry.match(/<updated>([^<]+)<\/updated>/) || [])[1] || "").trim();
   const have = await Promise.all(names.map(async (n) => {
     try {
-      const h = await fetch(fileUrl(n, repo), { method: "HEAD", redirect: "manual", headers: UA });
+      const h = await fetch(fileUrl(n, repo, want), { method: "HEAD", redirect: "manual", headers: UA });
       return h.status >= 300 && h.status < 400;
     } catch { return false; }
   }));
   const files = names.filter((n, i) => have[i]);
-  return files.length ? { name, body, published, files } : null;
+  return files.length ? { name, body, published, files, tag: want } : null;
 }
 
 const versionOf = (rel) => rel && (rel.name.match(/\d+\.\d+\.\d+/) || [])[0];
@@ -286,6 +328,9 @@ function ping(req, env, ctx, app, url) {
   const v = /^\d{1,4}\.\d{1,4}\.\d{1,6}$/.test(url.searchParams.get("v") || "") ? url.searchParams.get("v") : "?";
   count(env, ctx, app, "user", os, v);
   if (url.searchParams.get("new") === "1") count(env, ctx, app, "install", os, v);
+  // update channel (21 Nov 2026): one more row, version = the channel (older app versions don't send it)
+  const ch = String(url.searchParams.get("ch") || "");
+  if (["stable", "beta", "dev"].includes(ch)) count(env, ctx, app, "channel", os, ch);
   return ok;
 }
 
@@ -298,31 +343,42 @@ async function download(req, env, ctx, what, app = "aimdot") {
   return new Response(null, { status: 302, headers: { location: file ? fileUrl(file, APPS[app].repo) : `/${app}#download`, "cache-control": "no-store" } });
 }
 
-async function update(env, os, arch, current, app = "aimdot") {
+async function update(env, os, arch, current, app = "aimdot", channel = "stable") {
   const none = (why) => new Response(null, { status: 204, headers: { [`x-${app}-why`]: why, "cache-control": "no-store" } });
   if (!UPDATE_FILES[os]) return none("unknown-os");
   if (!ARCHES.has(arch)) return none("no-release");
   // the brake: `npx wrangler secret put AIMDOT_UPDATES_PAUSED` (or LASSO_UPDATES_PAUSED), value 1, pauses that app's
-  // updates; `wrangler secret delete` resumes
+  // updates on every channel; `wrangler secret delete` resumes
   if (env[`${app.toUpperCase()}_UPDATES_PAUSED`] === "1") return none("paused");
-  const rel = await latestRelease(env, app);
-  const version = versionOf(rel);
-  if (!version) return none("no-release");
-  const file = fileFor(rel, UPDATE_FILES[os], app);
-  if (!file) return none("no-release");
-  if (!rel.files.includes(`${file}.sig`)) return none("unsigned");
-  if (!newer(version, current)) return none("current");
-  const notes = builtFrom(rel).trim();
-  if (notes.startsWith("#")) return none("internal");
-  const key = `${app}:${version}:${file}`;
+  // the channel's releases (stable first); each is checked as before, the newest good one wins
+  const rels = await Promise.all((CHANNEL_TAGS[channel] || CHANNEL_TAGS.stable).map((t) => latestRelease(env, app, t).catch(() => null)));
+  const judge = (rel) => {
+    const version = versionOf(rel);
+    if (!version) return { why: "no-release" };
+    const file = fileFor(rel, UPDATE_FILES[os], app);
+    if (!file) return { why: "no-release" };
+    if (!rel.files.includes(`${file}.sig`)) return { why: "unsigned" };
+    if (!newer(version, current)) return { why: "current" };
+    const notes = builtFrom(rel).trim();
+    // "#" = internal build on stable; a beta / dev build is offered as it is (Echo's rule - the channel is the opt-in)
+    if (notes.startsWith("#") && rel.tag === "latest") return { why: "internal" };
+    return { rel, version, file, notes: notes.replace(/^#\s*/, "") };
+  };
+  const all = rels.map(judge);
+  const ok = all.filter((x) => !x.why).sort((a, b) => (newer(a.version, b.version) ? -1 : 1));
+  // nothing to offer: stable's reason (a channel without its own release yet doesn't hide it)
+  if (!ok.length) return none((all.find((x) => x.why !== "no-release") || all[0]).why);
+  const { rel, version, file, notes } = ok[0];
+  const key = `${app}:${rel.tag}:${version}:${file}`;
   let signature = sigMemo.get(key);
   if (!signature) {
-    const r = await fetch(fileUrl(`${file}.sig`, APPS[app].repo), { headers: UA }).catch(() => null);
+    const r = await fetch(fileUrl(`${file}.sig`, APPS[app].repo, rel.tag), { headers: UA }).catch(() => null);
     if (!r || !r.ok) return none("no-signature");
     signature = (await r.text()).trim();
     sigMemo.set(key, signature);
   }
-  return new Response(JSON.stringify({ version, notes, pub_date: rel.published, url: fileUrl(file, APPS[app].repo), signature }), {
+  const ch = rel.tag === "latest" ? {} : { channel: rel.tag };
+  return new Response(JSON.stringify({ version, notes, pub_date: rel.published, url: fileUrl(file, APPS[app].repo, rel.tag), signature, ...ch }), {
     headers: { "content-type": "application/json", "cache-control": "no-store" } });
 }
 
@@ -380,7 +436,9 @@ export default {
     let m = p.match(/^\/(aimdot|lasso)\/download\/([a-z-]+)\/?$/);
     if (m) return APPS[m[1]].files[m[2]] ? download(req, env, ctx, m[2], m[1]) : env.ASSETS.fetch(req);   // unknown: the 404 page
     m = p.match(/^\/(aimdot|lasso)\/update\/([a-z]+)\/([a-z0-9_]+)\/v?([0-9][0-9a-z.+-]{0,30})\/?$/);
-    if (m) return update(env, m[2], m[3], m[4], m[1]);
+    if (m) return update(env, m[2], m[3], m[4], m[1], channelOf(req, url, env));
+    m = p.match(/^\/(aimdot|lasso)\/channel\/check\/?$/);
+    if (m) return channelCheck(req, env);
     m = p.match(/^\/(aimdot|lasso)\/ping\/?$/);
     if (m) return ping(req, env, ctx, m[1], url);
     if (p === "/admin" || p.startsWith("/admin/"))

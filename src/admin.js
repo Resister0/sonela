@@ -97,7 +97,8 @@ async function appStats(req, env, opts, id) {
 }
 
 // One app's numbers in the shape of Echo's /admin/stats (the parts the page draws for "lite" apps):
-//   apps: {rows: [{day, k, n}] with k = app:<os> (copies used that day), appv:<os>:<version>, inst:<os>; latest; today}
+//   apps: {rows: [{day, k, n}] with k = app:<os> (copies used that day), appv:<os>:<version>, inst:<os>,
+//         appch:<os>:<stable|beta|dev> (the update channel of those copies); latest; today}
 //   site: {keys: {"dl:<button>": [today, 7 days, 30 days]}, daily: [{day, downloads, dlw, dll, visitors: 0, views: 0}]}
 //   installs: {total, windows, linux, d1, d7, d30}
 export async function liteStats(DB, id, app, latest, at = Math.floor(Date.now() / 1000)) {
@@ -126,6 +127,7 @@ export async function liteStats(DB, id, app, latest, at = Math.floor(Date.now() 
   for (const r of rows) {
     const os = sys(r.os), n = r.n || 0;
     if (r.kind === "user" && os) { add(r.day, `app:${os}`, n); add(r.day, `appv:${os}:${r.version}`, n); }
+    else if (r.kind === "channel" && os) add(r.day, `appch:${os}:${r.version}`, n);   // update channel (21 Nov 2026)
     else if (r.kind === "install" && os) {
       add(r.day, `inst:${os}`, n);
       const a = age(r.day); if (a < 1) out.installs.d1 += n; if (a < 7) out.installs.d7 += n; out.installs.d30 += n;
