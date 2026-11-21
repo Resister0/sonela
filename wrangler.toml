@@ -25,16 +25,21 @@ not_found_handling = "404-page"         # unknown paths get public/404.html with
 # Daily counts (downloads / installs / users per app per day, numbers only) - shown at sonela.app/admin (src/admin.js).
 # Set up once: npx wrangler d1 create sonela-stats   -> paste its database_id below and remove the #s,
 # then: npx wrangler d1 execute sonela-stats --remote --file=schema.sql   (until then the script counts nothing).
-# /admin signs in with Echo's admin email code through the ECHO binding below - no password of its own.
+# /admin = echoclip.link/admin's whole page with an app switcher (src/admin.js), through the two bindings below.
 [[d1_databases]]
 binding = "STATS"
 database_name = "sonela-stats"
 database_id = "1fdcfaba-5f4c-415b-b254-93cadef3115e"
 
-# sonela.app/admin's sign-in (echoclip.link/admin's email code) and Echo's numbers: a service binding to the echo-cloud
-# Worker's "HubStats" entrypoint (Echo's cloud/src/index.js + hub_stats.js). It has no web address - only Workers in the
-# same Cloudflare account can call it - so no secret is needed. Deploy echo-cloud (with HubStats) BEFORE this site.
+# sonela.app/admin talks to the echo-cloud Worker through two service bindings (no secrets - only Workers in the same
+# Cloudflare account can bind): ECHO = its "HubStats" entrypoint (no web address: the admin page files + "is this a
+# valid admin session?"), ECHO_WEB = its normal fetch (the page's own calls, passed on unchanged). Deploy echo-cloud
+# BEFORE this site when both changed.
 [[services]]
 binding = "ECHO"
 service = "echo-cloud"
 entrypoint = "HubStats"
+
+[[services]]
+binding = "ECHO_WEB"
+service = "echo-cloud"

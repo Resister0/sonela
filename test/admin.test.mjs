@@ -1,10 +1,14 @@
-// sonela.app/admin + the daily counts, run locally with a fake D1 (a real SQLite in memory, node:sqlite) and a fake
-// echo-cloud binding. Nothing here talks to Cloudflare or GitHub.   Run: node --test test/
+// sonela.app/admin (echoclip.link/admin's page + app switcher) and the daily counts, run locally with a fake D1 (a real
+// SQLite in memory, node:sqlite) and fake echo-cloud bindings. Nothing here talks to Cloudflare or GitHub.
+// Run: node --test test/*.test.mjs
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import worker from "../src/worker.js";
+
+// no network in tests: GitHub (release lookups) answers "no such release"
+globalThis.fetch = async () => new Response("", { status: 404 });
 
 // D1's API (prepare / bind / all / run / first / batch) over node:sqlite
 export function fakeD1(sql = "") {
@@ -26,31 +30,18 @@ export function fakeD1(sql = "") {
 const schema = readFileSync(new URL("../schema.sql", import.meta.url), "utf8");
 const day = (ago = 0) => new Date(Date.now() - ago * 86400e3).toISOString().slice(0, 10);
 const ORIGIN = "https://sonela.app";
+const TOKEN = "adm_" + "ab".repeat(32);
 const assets = { fetch: async (r) => new Response(new URL(r.url).pathname === "/404" ? "not found page" : "asset", { status: new URL(r.url).pathname === "/404" ? 404 : 200 }) };
-const echoSummary = (days) => ({
-  days: [...Array(days)].map((_, i) => ({ day: day(days - 1 - i), download: { windows: 2, linux: 1, other: 0 },
-    install: { windows: 1, linux: 0, other: 0 }, user: { windows: 40, linux: 10, other: 0 }, visitors: 20 })),
-  totals: { download: { windows: 500, linux: 120, other: 0 }, install: { windows: 300, linux: 60, other: 0 } },
-  versions: [{ version: "2.0.11", windows: 200, linux: 50, other: 0 }], since: { install: "2026-11-10" },
-  extra: [{ label: "Echo Cloud accounts", value: 77 }],
-});
-// stands in for echo-cloud's HubStats: only ADMIN gets a code, the code makes an adm_ session
-const ADMIN = "boss@example.com", TOKEN = "adm_" + "ab".repeat(32);
-function fakeEcho(over = {}) {
-  const sessions = new Set();
-  let code = null;
+// a cut-down copy of Echo's admin.html (the parts the hub changes)
+const ECHO_HTML = `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Echo stats</title>\n<style>body{}</style>\n</head>\n<body>\n<main id="app"></main>\n<script src="/admin.js"></script>\n</body>\n</html>`;
+// stands in for echo-cloud: HubStats (ECHO) and its normal fetch (ECHO_WEB), which records what it was sent
+function fakeEcho() {
+  const sent = [];
   return {
-    calls: [],
-    async signInStart(email, ip) { this.calls.push(["start", email, ip]); if (email === ADMIN) code = "123456"; return { ok: true }; },
-    async signInVerify(email, c, ip) {
-      this.calls.push(["verify", email, ip]);
-      if (email === ADMIN && code && c === code) { sessions.add(TOKEN); code = null; return { token: TOKEN }; }
-      return { error: "Wrong code", status: 400 };
-    },
-    async isAdmin(t) { return sessions.has(t); },
-    async signOut(t) { sessions.delete(t); },
-    async summary(d, t) { if (!sessions.has(t)) throw new Error("signed out"); return echoSummary(d); },
-    ...over,
+    sent,
+    ECHO: { isAdmin: async (t) => t === TOKEN, adminFiles: async () => ({ html: ECHO_HTML, js: "/* echo admin.js */" }) },
+    ECHO_WEB: { fetch: async (r) => { sent.push({ url: r.url, method: r.method, headers: Object.fromEntries(r.headers), body: r.method === "POST" ? await r.text() : null });
+      return new Response(JSON.stringify({ ok: true, from: "echo" }), { status: 200, headers: { "content-type": "application/json", "set-cookie": "x=1" } }); } },
   };
 }
 function env(over = {}) {
@@ -64,83 +55,103 @@ function env(over = {}) {
   add(day(2), "aimdot", "install", "linux", "1.0.2", 1);
   add(day(60), "aimdot", "install", "windows", "1.0.0", 9);   // old: only in "all time"
   add(day(0), "lasso", "user", "linux", "0.1.0", 1);
-  return { ASSETS: assets, STATS, ECHO: fakeEcho(), _wait: [], ...over };
+  const e = fakeEcho();
+  return { ASSETS: assets, STATS, ECHO: e.ECHO, ECHO_WEB: e.ECHO_WEB, _sent: e.sent, _wait: [], ...over };
 }
-const call = (e, path, { method = "GET", headers = {}, form, ua } = {}) =>
-  worker.fetch(new Request(ORIGIN + path, { method, headers: { "cf-connecting-ip": "203.0.113.9", ...(ua ? { "user-agent": ua } : {}), ...headers },
-    body: form ? new URLSearchParams(form) : undefined }), e, { waitUntil: (p) => e._wait.push(p) });
-const post = (e, path, form, headers = {}) => call(e, path, { method: "POST", form, headers: { origin: ORIGIN, ...headers } });
-// signs in like the browser does and returns the cookie header for the next requests
-async function signIn(e) {
-  assert.equal((await post(e, "/admin/sign-in", { email: ADMIN })).status, 200);
-  const r = await post(e, "/admin/code", { email: ADMIN, code: "123456" });
-  assert.equal(r.status, 303);
-  return { cookie: r.headers.get("set-cookie").split(";")[0] };
-}
-const get = async (e, path) => call(e, path, { headers: await signIn(e) });
+const call = (e, path, { method = "GET", headers = {}, body, ua } = {}) =>
+  worker.fetch(new Request(ORIGIN + path, { method, headers: { "cf-connecting-ip": "203.0.113.9", ...(ua ? { "user-agent": ua } : {}), ...headers }, body }),
+    e, { waitUntil: (p) => e._wait.push(p) });
+const signed = { authorization: `Bearer ${TOKEN}` };
 
-test("signed out: the sign-in form, no numbers; data.json 401", async () => {
-  const e = env();
-  const r = await call(e, "/admin");
+test("/admin = Echo's page with the switcher's settings, noindex, no-store, scripts only from this site", async () => {
+  const r = await call(env(), "/admin");
   assert.equal(r.status, 200);
   assert.equal(r.headers.get("cache-control"), "no-store");
   assert.match(r.headers.get("x-robots-tag"), /noindex/);
-  const page = await r.text();
-  assert.match(page, /action="\/admin\/sign-in"/);
-  assert.doesNotMatch(page, /Aimdot|Users today/);
-  const j = await call(e, "/admin/data.json");
-  assert.equal(j.status, 401);
-  assert.doesNotMatch(await j.text(), /aimdot/);
+  assert.match(r.headers.get("content-security-policy"), /script-src 'self';/);
+  const html = await r.text();
+  assert.match(html, /<title>Sonela admin<\/title>/);
+  assert.match(html, /<script src="\/admin\/admin\.js"><\/script>/);
+  const cfg = JSON.parse(html.match(/data-cfg="([^"]*)"/)[1].replace(/&quot;/g, '"').replace(/&amp;/g, "&"));
+  assert.equal(cfg.api, "/admin/echo");
+  assert.equal(cfg.site, "https://echoclip.link");
+  assert.deepEqual(cfg.apps.map((a) => [a.id, a.name, a.stats]), [
+    ["echo", "Echo", "/admin/echo/admin/stats"], ["aimdot", "Aimdot", "/admin/app/aimdot/stats"], ["lasso", "Lasso", "/admin/app/lasso/stats"]]);
+  assert.ok(cfg.apps.every((a) => a.icon && a.note));
 });
 
-test("sign-in: Echo's code flow; the session cookie is HttpOnly, Secure, SameSite=Strict, __Host-", async () => {
-  const e = env();
-  const r1 = await post(e, "/admin/sign-in", { email: ADMIN });
-  assert.match(await r1.text(), /action="\/admin\/code"/);
-  assert.deepEqual(e.ECHO.calls[0], ["start", ADMIN, "203.0.113.9"]);   // Echo's limits per network get the real IP
-  const bad = await post(e, "/admin/code", { email: ADMIN, code: "000000" });
-  assert.equal(bad.status, 400);
-  assert.match(await bad.text(), /Wrong code/);
-  assert.equal(bad.headers.get("set-cookie"), null);
-  const r2 = await post(e, "/admin/code", { email: ADMIN, code: "123456" });
-  assert.equal(r2.status, 303);
-  assert.equal(r2.headers.get("location"), "/admin");
-  const c = r2.headers.get("set-cookie");
-  assert.match(c, /^__Host-sonela_admin=adm_[0-9a-f]{64};/);
-  for (const part of ["HttpOnly", "Secure", "SameSite=Strict", "Path=/"]) assert.ok(c.includes(part), part);
+test("/admin/admin.js = Echo's admin.js", async () => {
+  const r = await call(env(), "/admin/admin.js");
+  assert.match(r.headers.get("content-type"), /javascript/);
+  assert.equal(await r.text(), "/* echo admin.js */");
 });
 
-test("another address gets the same answer but never a session", async () => {
+test("Echo's page changed shape: a clear error instead of a broken page", async () => {
   const e = env();
-  assert.match(await (await post(e, "/admin/sign-in", { email: "someone@example.com" })).text(), /a 6-digit code is on its way/);
-  assert.equal((await post(e, "/admin/code", { email: "someone@example.com", code: "123456" })).status, 400);
+  e.ECHO = { ...e.ECHO, adminFiles: async () => ({ html: "<html>new</html>", js: "" }) };
+  assert.equal((await call(e, "/admin")).status, 502);
+  assert.equal((await call(e, "/admin/admin.js")).status, 502);
 });
 
-test("forms from another site are refused", async () => {
+test("Echo's own calls go to echo-cloud unchanged (with the visitor's IP for Echo's limits); the sign-in is always the admin one", async () => {
   const e = env();
-  for (const h of [{ origin: "https://evil.example" }, { origin: "null" }, { origin: "" }, { origin: "", "sec-fetch-site": "cross-site" }]) {
-    const r = await post(e, "/admin/sign-in", { email: ADMIN }, h);
-    assert.equal(r.status, 403, JSON.stringify(h));
+  const r = await call(e, "/admin/echo/auth/start", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: "a@example.com", admin: false }) });
+  assert.equal(r.status, 200);
+  assert.equal(r.headers.get("set-cookie"), null);                 // nothing of echo-cloud's own headers leaks through
+  assert.equal(e._sent[0].url, "https://echoclip.link/auth/start");
+  assert.deepEqual(JSON.parse(e._sent[0].body), { email: "a@example.com", admin: true });
+  assert.equal(e._sent[0].headers["cf-connecting-ip"], "203.0.113.9");
+  await call(e, "/admin/echo/admin/stats", { headers: signed });
+  assert.equal(e._sent[1].url, "https://echoclip.link/admin/stats");
+  assert.equal(e._sent[1].headers.authorization, `Bearer ${TOKEN}`);
+  await call(e, "/admin/echo/admin/release", { method: "POST", headers: signed, body: '{"version":"2.0.11","paused":true}' });
+  assert.equal(e._sent[2].body, '{"version":"2.0.11","paused":true}');
+});
+
+test("only Echo's admin calls pass: anything else is a 404 and never reaches echo-cloud", async () => {
+  const e = env();
+  for (const [method, p] of [["POST", "/admin/echo/creds"], ["GET", "/admin/echo/me"], ["POST", "/admin/echo/account/delete"], ["GET", "/admin/echo/auth/start"], ["GET", "/admin/echo/admin/../creds"]]) {
+    const r = await call(e, p, { method, headers: signed });
+    assert.equal(r.status, 404, p);
   }
-  assert.equal(e.ECHO.calls.length, 0);
-  // no Origin header but the browser says it came from this site: fine
-  assert.equal((await post(e, "/admin/sign-in", { email: ADMIN }, { origin: "", "sec-fetch-site": "same-origin" })).status, 200);
+  assert.equal(e._sent.length, 0);
 });
 
-test("a made-up or ended session is not let in, and the cookie is cleared", async () => {
+test("an app counted here: only for a valid admin session", async () => {
   const e = env();
-  const r = await call(e, "/admin", { headers: { cookie: `__Host-sonela_admin=${TOKEN}` } });
-  assert.match(await r.text(), /Signed out - sign in again/);
-  assert.match(r.headers.get("set-cookie"), /Max-Age=0/);
-  const h = await signIn(e);
-  assert.match(await (await call(e, "/admin", { headers: h })).text(), /<h2 id="aimdot">/);
-  const out = await call(e, "/admin/sign-out", { method: "POST", headers: { ...h, origin: ORIGIN } });
-  assert.equal(out.status, 303);
-  assert.match(out.headers.get("set-cookie"), /Max-Age=0/);
-  assert.doesNotMatch(await (await call(e, "/admin", { headers: h })).text(), /<h2 id="aimdot">/);
+  assert.equal((await call(e, "/admin/app/aimdot/stats")).status, 403);
+  assert.equal((await call(e, "/admin/app/aimdot/stats", { headers: { authorization: "Bearer adm_" + "00".repeat(32) } })).status, 403);
+  const r = await call(e, "/admin/app/aimdot/stats", { headers: signed });
+  assert.equal(r.status, 200);
+  assert.equal(r.headers.get("cache-control"), "no-store");
+  assert.equal((await call(e, "/admin/app/nope/stats", { headers: signed })).status, 404);
 });
 
-test("no Echo connection: says so instead of a sign-in that can't work", async () => {
+test("an app's numbers come in the page's own shape (Echo's /admin/stats parts)", async () => {
+  const j = await (await call(env(), "/admin/app/aimdot/stats", { headers: signed })).json();
+  assert.equal(j.lite, true);
+  assert.equal(j.app.name, "Aimdot");
+  const row = (d, k) => (j.apps.rows.find((r) => r.day === day(d) && r.k === k) || {}).n;
+  assert.equal(row(0, "app:windows"), 3);
+  assert.equal(row(0, "app:linux"), 2);
+  assert.equal(row(0, "appv:windows:1.0.3"), 3);
+  assert.equal(row(1, "appv:windows:1.0.2"), 4);
+  assert.equal(row(2, "inst:linux"), 1);
+  assert.equal(j.apps.today, day(0));
+  assert.equal(j.site.daily.length, 30);
+  assert.deepEqual(j.site.daily.at(-2), { day: day(1), visitors: 0, views: 0, downloads: 8, dlw: 6, dll: 2 });
+  assert.deepEqual(j.site.keys["dl:windows-portable"], [0, 6, 6]);
+  assert.deepEqual(j.installs, { total: 10, windows: 9, linux: 1, d1: 0, d7: 1, d30: 1 });
+  assert.equal(j.apps.latest, null);   // the fake GitHub has no release
+});
+
+test("no database yet: the numbers are zeros with a note", async () => {
+  const j = await (await call(env({ STATS: undefined }), "/admin/app/lasso/stats", { headers: signed })).json();
+  assert.equal(j.installs.total, 0);
+  assert.match(j.note, /No database yet/);
+});
+
+test("no Echo connection: says so", async () => {
   const r = await call(env({ ECHO: undefined }), "/admin");
   assert.equal(r.status, 503);
   assert.match(await r.text(), /connection to echo-cloud/);
@@ -152,61 +163,15 @@ test("/stats redirects to /admin", async () => {
   assert.equal(r.headers.get("location"), "/admin");
 });
 
-test("the page: every app, noindex, no-store, no script", async () => {
-  const r = await get(env(), "/admin");
-  assert.equal(r.status, 200);
-  assert.equal(r.headers.get("cache-control"), "no-store");
-  assert.match(r.headers.get("x-robots-tag"), /noindex/);
-  assert.match(r.headers.get("content-security-policy"), /default-src 'none'/);
-  const html = await r.text();
-  for (const name of ["Echo", "Aimdot", "Lasso"]) assert.match(html, new RegExp(`<h2 id="${name.toLowerCase()}">`));
-  assert.ok(html.indexOf('id="echo"') < html.indexOf('id="aimdot"') && html.indexOf('id="aimdot"') < html.indexOf('id="lasso"'));
-  assert.doesNotMatch(html, /<script/i);
-  assert.match(html, /echoclip\.link\/admin/);           // Echo's full page stays reachable
-  assert.match(html, /Echo Cloud accounts/);
-  assert.match(html, /Website visitors/);
-});
-
-test("the numbers: per day, totals, versions, Windows / Linux", async () => {
-  const r = await get(env(), "/admin/data.json");
-  assert.equal(r.status, 200);
-  const { apps, days } = await r.json();
-  assert.deepEqual(apps.map((a) => a.id), ["echo", "aimdot", "lasso"]);
-  const a = apps.find((x) => x.id === "aimdot");
-  assert.equal(a.days.length, days);
-  assert.equal(a.days.at(-1).day, day(0));
-  assert.deepEqual(a.days.at(-1).user, { windows: 3, linux: 2, other: 0 });
-  assert.deepEqual(a.days.at(-2).download, { windows: 6, linux: 2, other: 0 });   // windows-portable / linux-tar
-  assert.deepEqual(a.totals.install, { windows: 9, linux: 1, other: 0 });            // the 60-day-old one counts here
-  assert.equal(a.days.reduce((t, d) => t + d.install.windows, 0), 0);                // ...but not in the 30 days
-  assert.deepEqual(a.versions.map((v) => v.version), ["1.0.3", "1.0.2"]);
-  assert.equal(a.since.install, day(60));
-  assert.equal(apps.find((x) => x.id === "echo").extra[0].value, 77);
-});
-
-test("Echo's numbers failing: its section says so, the rest still works", async () => {
-  {
-    const html = await (await get(env({ ECHO: fakeEcho({ summary: async () => { throw new Error("boom"); } }) }), "/admin")).text();
-    const msg = /Couldn&#39;t read it right now \(boom\)/;
-    assert.match(html, msg);
-    assert.match(html, /<h2 id="aimdot">/);
-    assert.match(html, /Users today<\/span><b>5<\/b>/);
-  }
-});
-
-test("no database yet: the hub's apps say so, Echo still shows", async () => {
-  const html = await (await get(env({ STATS: undefined }), "/admin")).text();
-  assert.match(html, /No database yet/);
-  assert.match(html, /Echo Cloud accounts/);
-});
-
 test("a ping from the app counts a user (and an install when new=1) and shows up on /admin", async () => {
   const e = env();
   await call(e, "/lasso/ping?v=0.1.0&os=windows&new=1", { ua: "Lasso/0.1.0" });
   await call(e, "/lasso/ping?v=0.1.0&os=windows", { ua: "Mozilla/5.0" });   // a browser: not counted
   await Promise.all(e._wait);
-  const { apps } = await (await get(e, "/admin/data.json")).json();
-  const l = apps.find((x) => x.id === "lasso");
-  assert.deepEqual(l.days.at(-1).user, { windows: 1, linux: 1, other: 0 });
-  assert.deepEqual(l.days.at(-1).install, { windows: 1, linux: 0, other: 0 });
+  const j = await (await call(e, "/admin/app/lasso/stats", { headers: signed })).json();
+  const row = (k) => (j.apps.rows.find((r) => r.day === day(0) && r.k === k) || {}).n;
+  assert.equal(row("app:windows"), 1);
+  assert.equal(row("app:linux"), 1);
+  assert.equal(row("inst:windows"), 1);
+  assert.equal(j.installs.total, 1);
 });

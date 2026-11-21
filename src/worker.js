@@ -8,7 +8,7 @@
 //                                                                     else JSON {version, notes, pub_date, url, signature}
 //   /<aimdot|lasso>/ping?v=<version>&os=<windows|linux>&new=<0|1>       -> 204; the app sends it at most once a day: +1 user
 //                                                                     that day (and +1 install when new=1)
-//   /admin                                                        -> every app's numbers (src/admin.js; sign-in = Echo's admin email code);
+//   /admin                                                        -> echoclip.link/admin's whole page with an app switcher (src/admin.js);
 //                                                                     /stats (the old address) redirects there
 //   /aimdot                                                       -> the static page; its download buttons switch from
 //                                                                     "Coming soon" to real links once the release has the file
@@ -34,10 +34,10 @@ const FILES = {
 // the apps without a website of their own: their public repo. A repo that doesn't exist yet (Lasso) = "No versions yet";
 // its list shows up by itself once the repo has its first publish.
 const APPS = {
-  // color = the app's dot on sonela.app/admin (each app here shows up there by itself)
-  aimdot: { name: "Aimdot", color: "#ef6a4c", repo: REPO, files: FILES },
+  // note + icon = its line in sonela.app/admin's app switcher (each app here shows up there by itself)
+  aimdot: { name: "Aimdot", note: "crosshair", icon: "/aimdot.svg", repo: REPO, files: FILES },
   // Lasso's release files (its ci/public-build.yml)
-  lasso: { name: "Lasso", color: "#14a38b", repo: "Resister0/lasso", files: {
+  lasso: { name: "Lasso", note: "screenshots", icon: "/lasso.svg", repo: "Resister0/lasso", files: {
     "windows": ["Lasso-Setup.exe"],
     "windows-portable": ["Lasso-Windows.zip"],
     "linux": ["Lasso-x86_64.AppImage"],
@@ -379,7 +379,8 @@ export default {
     m = p.match(/^\/(aimdot|lasso)\/ping\/?$/);
     if (m) return ping(req, env, ctx, m[1], url);
     if (p === "/admin" || p.startsWith("/admin/"))
-      return admin(req, env, APPS, () => env.ASSETS.fetch(new Request(new URL("/404", req.url))));
+      return admin(req, env, { apps: APPS, latest: async (a) => versionOf(await latestRelease(env, a)) || null,
+        notFound: () => env.ASSETS.fetch(new Request(new URL("/404", req.url))) });
     if (p === "/stats" || p === "/stats/") return new Response(null, { status: 301, headers: { location: "/admin", "cache-control": "no-store" } });
     m = p.match(/^\/([a-z]+)\/changes\/?$/);
     if (m && APPS[m[1]]) {
