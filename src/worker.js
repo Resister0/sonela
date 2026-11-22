@@ -397,7 +397,7 @@ async function appPage(req, env, app) {
   const res = await env.ASSETS.fetch(new Request(req.url, { method: req.method === "HEAD" ? "HEAD" : "GET" }));
   if (res.status !== 200 || !(res.headers.get("content-type") || "").includes("text/html")) return res;
   const [rel, changes] = await Promise.all([
-    app === "aimdot" ? latestRelease(env).catch(() => null) : null,
+    latestRelease(env, app).catch(() => null),
     changesOf(env, app).catch((e) => { console.log("changes error", e && e.message); return null; }),
   ]);
   const list = changes && changes.releases.length ? changes : null;
@@ -405,7 +405,9 @@ async function appPage(req, env, app) {
     if (list) el.setInnerContent(changesHtml(app, list.releases), { html: true });
     else if (!changes) el.setInnerContent(`<p class="cnone">Couldn't load the list - try again in a moment.</p>`, { html: true });
   } });
-  const ready = Object.keys(FILES).filter((w) => fileFor(rel, w));
+  // Lasso (22 Nov 2026): its page says "coming soon" until a real release - its "#" test builds don't count
+  const real = rel && (app === "aimdot" || !builtFrom(rel).trim().startsWith("#"));
+  const ready = real ? Object.keys(APPS[app].files).filter((w) => fileFor(rel, w, app)) : [];
   if (!ready.length) return fresh(out.transform(res));
   const v = versionOf(rel);
   const when = Date.parse(rel.published || "");
@@ -415,14 +417,17 @@ async function appPage(req, env, app) {
       const what = el.getAttribute("data-dl");
       if (!ready.includes(what)) return;
       el.tagName = "a";
-      el.setAttribute("href", `/aimdot/download/${what}`);
+      el.setAttribute("href", `/${app}/download/${what}`);
       el.setAttribute("class", "btn app dl");
       el.removeAttribute("aria-disabled");
     } })
     .on("[data-dl-soon]", { element(el) { if (ready.includes(el.getAttribute("data-dl-soon"))) el.remove(); } })
     .on("[data-dl-version]", { element(el) {
-      if (v) el.setInnerContent(`Aimdot ${v}${day} · Windows and Linux · <a href="#changes">What's new</a>`, { html: true });
+      if (v) el.setInnerContent(`${APPS[app].name} ${v}${day} · Windows and Linux · <a href="#changes">What's new</a>`, { html: true });
     } })
+    // "coming soon" texts that go once it's out (Lasso's kicker, link-preview texts)
+    .on("[data-soon-gone]", { element(el) { el.remove(); } })
+    .on("meta[data-soon-meta]", { element(el) { el.setAttribute("content", (el.getAttribute("content") || "").replace(/\s*Coming soon\.$/, "")); } })
     .transform(res));
 }
 

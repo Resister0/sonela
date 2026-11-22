@@ -209,6 +209,8 @@ main.sn-sub > section:not(.hero) > .wrap { height: auto; }
 .sn-solo__feats { list-style: none; margin: var(--s-6) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); width: 100%; }
 .sn-solo__feats li { border-top: 1px solid var(--line); padding-top: var(--s-4); color: #c4c4c4; }
 .sn-solo__feats b { display: block; color: var(--p-ink); font-family: var(--font-display); font-weight: 500; font-size: var(--t-card); margin-bottom: var(--s-2); }
+.sn-solo .dl-grid { margin-top: var(--s-2); width: 100%; }
+.sn-solo .note { margin: 0; }
 .sn-404 { list-style: none; margin: var(--s-4) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-6); }
 .sn-404 a::after { content: " \2192"; }
 
