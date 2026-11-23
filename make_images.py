@@ -58,9 +58,9 @@ OG = (f'<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBo
       f'<path d="{S_PATH}" fill="none" stroke="{BG}" stroke-width="6" stroke-linecap="round"/></g>'
       f'<text x="270" y="222" font-family="{FONT}" font-size="108" font-weight="700" letter-spacing="-3" fill="{INK}">{BRAND}</text>'
       f'<text x="274" y="282" font-family="{FONT}" font-size="38" font-weight="500" fill="{MUTED}">Free, lightweight tools for PC gamers</text>'
-      + chip(90, "Echo", "clips · out now", ECHO, True)
-      + chip(420, "Aimdot", "crosshair · soon", AIMDOT, False)
-      + chip(750, "Lasso", "screenshots · soon", LASSO, False)
+      + chip(90, "Echo", "game clips", ECHO, True)
+      + chip(420, "Aimdot", "crosshair", AIMDOT, True)
+      + chip(750, "Lasso", "screenshots", LASSO, True)
       + f'<text x="90" y="560" font-family="{FONT}" font-size="28" font-weight="600" fill="{MUTED}">Free · No ads · Open source · Windows &amp; Linux</text>'
       '</svg>\n')
 

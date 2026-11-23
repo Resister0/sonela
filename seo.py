@@ -30,7 +30,7 @@ PRIORITY = {"/": "1.0", "/about": "0.6", "/aimdot": "0.7", "/lasso": "0.7", "/pr
 APPS = [
     {"name": "Echo", "url": "https://echoclip.link/", "about": "Game clip recorder for Windows and Linux"},
     {"name": f"{BRAND} Aimdot", "url": f"{ORIGIN}/aimdot", "about": "Crosshair overlay"},
-    {"name": f"{BRAND} Lasso", "url": f"{ORIGIN}/lasso", "about": "Screenshot and snipping tool (coming soon)"},
+    {"name": f"{BRAND} Lasso", "url": f"{ORIGIN}/lasso", "about": "Screenshot and snipping tool"},
 ]
 
 BEGIN, END = "<!-- seo: managed by seo.py, edit there -->", "<!-- /seo -->"

@@ -57,10 +57,10 @@ HEADER = r'''<header class="nav">
               <p class="t-label">Out now</p>
               <a href="https://echoclip.link/">Echo<span>Game clip recorder, 2.0</span></a>
               <a href="/aimdot">Aimdot<span>Crosshair overlay, 1.0</span></a>
+              <a href="/lasso">Lasso<span>Screenshot tool, 0.1</span></a>
             </div>
             <div class="menu-col span-3">
-              <p class="t-label">Coming next</p>
-              <a href="/lasso">Lasso<span>Screenshot tool</span></a>
+              <p class="t-label">Community</p>
               <a href="https://discord.gg/JPVewEfUQs">Discord<span>News and help</span></a>
             </div>
             <a class="menu-card span-3 start-10" href="/aimdot">
@@ -206,10 +206,10 @@ PAGES = [  # file, <title>, <meta description>, nav word marked as current ("" =
     <div class="wrap">
       <div class="grid grid--top sn-split">
         <div class="span-5 stack-4">
-          <p class="sn-kicker sn-kicker--plain">Coming next · Windows and Linux</p>
+          <p class="sn-kicker"><img src="/lasso.svg" alt="" width="40" height="40">Out now · Windows and Linux</p>
           <h2 id="lasso-h">Lasso, the screenshot tool</h2>
           <p class="t-lead">Draw around any part of the screen, mark it up, then copy, save or share it. Light enough to leave running all the time.</p>
-          <div class="btn-row"><a class="btn btn--secondary" href="https://discord.gg/JPVewEfUQs">Get news on Discord</a><a class="btn btn--secondary" href="/lasso">More about Lasso</a></div>
+          <div class="btn-row"><a class="btn btn--primary sn-dl" href="/lasso#download"><img src="/lasso.svg" alt="" width="24" height="24">Download Lasso</a><a class="btn btn--secondary" href="/lasso">More about Lasso</a></div>
         </div>
         <div class="span-6 start-7 sn-tile"><img src="/lasso.svg" alt="Lasso's app icon: a dashed loop on teal" width="220" height="220" loading="lazy"></div>
       </div>
@@ -246,7 +246,7 @@ PAGES = [  # file, <title>, <meta description>, nav word marked as current ("" =
       <div class="span-6 start-7 sn-rows">
         <a class="sn-row" href="https://echoclip.link/"><img src="/echo.png" alt="" width="56" height="56"><span><b>Echo</b><em class="sn-tag sn-tag--out">Out now · 2.0</em><small>Game clip recorder for Windows and Linux.</small></span></a>
         <a class="sn-row" href="/aimdot"><img src="/aimdot.svg" alt="" width="56" height="56"><span><b>Aimdot</b><em class="sn-tag sn-tag--out">Out now · 1.0</em><small>A crosshair overlay for any game.</small></span></a>
-        <a class="sn-row" href="/lasso"><img src="/lasso.svg" alt="" width="56" height="56"><span><b>Lasso</b><em class="sn-tag">Coming soon</em><small>A screenshot tool: draw around it, mark it up, share it.</small></span></a>
+        <a class="sn-row" href="/lasso"><img src="/lasso.svg" alt="" width="56" height="56"><span><b>Lasso</b><em class="sn-tag sn-tag--out">Out now · 0.1</em><small>A screenshot tool: draw around it, mark it up, share it.</small></span></a>
       </div>
     </div></div>
   </section>
@@ -345,15 +345,22 @@ PAGES = [  # file, <title>, <meta description>, nav word marked as current ("" =
 ''',
      "SUB_FOOT"),
     ("lasso.html", "Sonela Lasso - a free screenshot tool for Windows and Linux",
-     "Sonela Lasso: draw around any part of the screen, mark it up, then copy, save or share it. Free and open source. Coming soon.", "",
+     "Sonela Lasso: draw around any part of the screen, mark it up, then copy, save or share it. Free and open source.", "",
      r'''<main id="top" class="sn-sub sn-sub--lasso">
   <section class="hero sn-solo" data-enter aria-labelledby="hero-h">
     <div class="wrap">
       <img class="sn-solo__icon" src="/lasso.svg" alt="" width="128" height="128">
-      <p class="sn-kicker sn-kicker--plain">Lasso · coming soon</p>
+      <p class="sn-kicker sn-kicker--plain">Lasso</p>
       <h1 id="hero-h">A free screenshot tool for Windows and Linux</h1>
       <p class="hero__lead">Draw around any part of the screen, mark it up, then copy, save or share it. Light enough to leave running all the time.</p>
-      <div class="btn-row"><span class="btn btn--secondary sn-off" aria-disabled="true">Download · coming soon</span><a class="btn btn--primary" href="https://discord.gg/JPVewEfUQs">Get news on Discord</a></div>
+      <div class="dl-grid sn-solo__dl" id="download">
+        <span class="btn off dl" data-dl="windows" aria-disabled="true"><span>Windows (installer)</span><small data-dl-soon="windows">Coming soon</small></span>
+        <span class="btn off dl" data-dl="windows-portable" aria-disabled="true"><span>Windows (portable zip)</span><small data-dl-soon="windows-portable">Coming soon</small></span>
+        <span class="btn off dl" data-dl="linux" aria-disabled="true"><span>Linux (AppImage)</span><small data-dl-soon="linux">Coming soon</small></span>
+        <span class="btn off dl" data-dl="linux-tar" aria-disabled="true"><span>Linux (tar.gz)</span><small data-dl-soon="linux-tar">Coming soon</small></span>
+      </div>
+      <p class="note dl-ver" data-dl-version></p>
+      <p class="note">Free and open source. No ads, no account. <a href="https://discord.gg/JPVewEfUQs">Get news on Discord</a></p>
       <ul class="sn-solo__feats">
         <li><b>Draw around it</b>Grab exactly the part of the screen you want, any shape.</li>
         <li><b>Mark it up</b>Arrows, boxes and text before you send it.</li>

@@ -53,7 +53,11 @@
   Draw around any part of the screen, mark it up,<br>
   then copy, save or share it.
 </p>
-<p align="center"><b>Coming soon</b> · <a href="https://sonela.app/lasso">sonela.app/lasso</a></p>
+<p align="center">
+  <a href="https://sonela.app/lasso#download"><b>Download Lasso</b></a> ·
+  <a href="https://sonela.app/lasso">sonela.app/lasso</a> ·
+  <a href="https://github.com/Resister0/lasso">Code on GitHub</a>
+</p>
 
 <br>
 
