@@ -384,18 +384,21 @@ PAGES = [  # file, <title>, <meta description>, nav word marked as current ("" =
 ''',
      "SUB_FOOT"),
     ("privacy.html", "Privacy - Sonela",
-     "The Sonela website has no cookies, analytics, trackers or forms. It collects nothing about you. Each app has its own privacy policy.", "",
+     "The Sonela website has no cookies, analytics, trackers or forms. It keeps nothing about you. Each app has its own privacy policy.", "",
      r'''<main id="top" class="sn-sub sn-sub--privacy">
   <section class="section sn-docsec sn-docsec--top">
     <div class="wrap">
       <article class="sn-doc">
         <h1>Privacy</h1>
-        <p class="updated">Last updated: 10 November 2026</p>
+        <p class="updated">Last updated: 21 November 2026</p>
         <p>This website collects nothing about you. It has no cookies, no analytics, no trackers, no ads, no embedded videos or fonts from other sites, and no forms. It is plain pages.</p>
         <p>The pages are served by Cloudflare. Like any web host, Cloudflare needs your IP address to send you the page, and may keep it in short-lived logs to keep the service running and safe. We only see total numbers (for example how many requests the site got in a day), never anything about one visitor.</p>
+        <p>We count downloads: when you click a download link here, that day's number for that file goes up by one. Nothing else about the click is kept.</p>
         <p>Links to other sites (echoclip.link, GitHub, Discord) take you to those sites, and their own privacy policies apply there.</p>
         <h2>The apps</h2>
         <p>Each app has its own privacy policy, on its own website. Echo's is at <a href="https://echoclip.link/privacy">echoclip.link/privacy</a>.</p>
+        <p>Aimdot and Lasso tell sonela.app at most once a day that they're in use: the app's version, Windows or Linux, and whether it's the very first start. That only adds one to that day's count of users (and installs). There is no ID, and nothing that could tell one person apart from another. They also ask sonela.app for updates now and then, with the same version and system. Each app has a switch to turn the daily count off.</p>
+        <p>Lasso's share links (only when you make one): the picture is stored on the Sonela server so the link can show it, and it is deleted when the link expires or you stop sharing. Without an account, Lasso makes a random key on your PC the first time, so your links stay yours (you can stop them later); links made that way last a year at most. The key isn't tied to you, your PC or anything else. With an Echo Cloud account, your links belong to that account.</p>
         <h2>Contact</h2>
         <p><a href="mailto:support@echoclip.link">support@echoclip.link</a></p>
       </article>
