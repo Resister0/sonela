@@ -154,13 +154,22 @@ async function releaseFromWeb({ repo, files: wanted }, want = "latest") {
   return files.length ? { name, body, published, files, tag: want } : null;
 }
 
-const versionOf = (rel) => rel && (rel.name.match(/\d+\.\d+\.\d+/) || [])[0];
+const versionOf = (rel) => rel && (rel.name.match(/\d+\.\d+\.\d+(?:-[a-z]+\.\d+)?/) || [])[0];
 const fileFor = (rel, what, app = "aimdot") => rel && (APPS[app].files[what] || []).find((n) => rel.files.includes(n));
 const builtFrom = (rel) => ((rel && rel.body.match(/Built from: (.*)/)) || [])[1] || "";
-const verNum = (v) => String(v || "").replace(/^v/, "").split(/[.+-]/).slice(0, 3).map((x) => parseInt(x, 10) || 0);
+// 24 Nov 2026 (like Echo's): a beta / dev build is named after the Stable it leads up to + one count for both channels
+// (1.0.9-beta.1, 1.0.9-dev.2) and is OLDER than that Stable, newer than the one before: testers stay on their channel
+// until that Stable comes out, then get it. [major, minor, patch, pre-release count or Infinity for a Stable]
+const verNum = (v) => {
+  const s = String(v || "").trim().replace(/^v/, "").split("+")[0], i = s.indexOf("-");
+  const n = (i < 0 ? s : s.slice(0, i)).split(".").slice(0, 3).map((x) => parseInt(x, 10) || 0);
+  while (n.length < 3) n.push(0);
+  n.push(i < 0 ? Infinity : parseInt(s.slice(i + 1).split(".").pop(), 10) || 0);
+  return n;
+};
 function newer(a, b) {
   const x = verNum(a), y = verNum(b);
-  for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] > y[i];
+  for (let i = 0; i < 4; i++) if (x[i] !== y[i]) return x[i] > y[i];
   return false;
 }
 
@@ -325,7 +334,7 @@ function ping(req, env, ctx, app, url) {
   // only the app itself (User-Agent "Aimdot/1.2.3" / "Lasso/0.1.0"), never a browser or a crawler
   if (!(req.headers.get("user-agent") || "").toLowerCase().startsWith(`${app}/`)) return ok;
   const os = ["windows", "linux"].includes(url.searchParams.get("os")) ? url.searchParams.get("os") : "other";
-  const v = /^\d{1,4}\.\d{1,4}\.\d{1,6}$/.test(url.searchParams.get("v") || "") ? url.searchParams.get("v") : "?";
+  const v = /^\d{1,4}\.\d{1,4}\.\d{1,6}(-(beta|dev)\.\d{1,6})?$/.test(url.searchParams.get("v") || "") ? url.searchParams.get("v") : "?";
   count(env, ctx, app, "user", os, v);
   if (url.searchParams.get("new") === "1") count(env, ctx, app, "install", os, v);
   // update channel (21 Nov 2026): one more row, version = the channel (older app versions don't send it)

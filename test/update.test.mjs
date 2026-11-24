@@ -105,6 +105,28 @@ test("'#' = internal on stable only; an unsigned beta is skipped", async () => {
   assert.equal((await check("/lasso/update/linux/x86_64/0.1.4?ch=dev", { code: CODE })).body.version, "0.1.6");
 });
 
+test("test builds named after their Stable (1.0.9-beta.1): older than that Stable, newer than the one before", async () => {
+  REL = { aimdot: { latest: rel("Aimdot", "1.0.8", "Stable one"), beta: rel("Aimdot", "1.0.9-beta.1 (beta)", "Beta one"),
+    dev: rel("Aimdot", "1.0.9-dev.2 (dev)", "Dev one") } };
+  const b = await check("/aimdot/update/windows/x86_64/1.0.8?ch=beta");
+  assert.equal(b.body.version, "1.0.9-beta.1");
+  assert.equal(b.body.channel, "beta");
+  // dev sees both: the higher count wins
+  assert.equal((await check("/aimdot/update/windows/x86_64/1.0.8?ch=dev", { code: CODE })).body.version, "1.0.9-dev.2");
+  assert.equal((await check("/aimdot/update/windows/x86_64/1.0.9-dev.2?ch=dev", { code: CODE })).why, "current");
+  // Stable never sees them
+  assert.equal((await check("/aimdot/update/windows/x86_64/1.0.8")).why, "current");
+});
+
+test("the Stable a test build led up to comes out: every tester gets it", async () => {
+  REL = { aimdot: { latest: rel("Aimdot", "1.0.9", "Stable after the tests"), beta: rel("Aimdot", "1.0.9-beta.1 (beta)", "Beta one"),
+    dev: rel("Aimdot", "1.0.9-dev.2 (dev)", "Dev one") } };
+  const s = await check("/aimdot/update/windows/x86_64/1.0.9-dev.2?ch=dev", { code: CODE });
+  assert.equal(s.body.version, "1.0.9");
+  assert.equal(s.body.channel, undefined);
+  assert.equal((await check("/aimdot/update/windows/x86_64/1.0.9-beta.1?ch=beta")).body.version, "1.0.9");
+});
+
 test("no release at all, a channel without its own release, the pause switch", async () => {
   REL = {};
   assert.equal((await check("/lasso/update/linux/x86_64/0.1.0?ch=beta")).why, "no-release");
