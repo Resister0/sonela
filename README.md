@@ -17,7 +17,7 @@
 <h2 align="center">Echo</h2>
 <p align="center">
   Records your game in the background. Press one key to save the last moments,<br>
-  then trim them and share them on Discord. Uses about 100 MB of memory while recording.
+  then trim them and share them on Discord. Uses about 80 MB of memory while it records in the background.
 </p>
 <p align="center">
   <a href="https://echoclip.link/download"><b>Download Echo</b></a> ·
